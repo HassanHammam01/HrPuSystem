@@ -1,51 +1,71 @@
 ﻿@model HrPuSystem.Models.LeaveRecord
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create Leave Record";
 }
 
-<h1>Create</h1>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <h2 class="text-primary fw-bold">📝 Create Leave Record</h2>
+        <a asp-action="Index" class="btn btn-secondary d-flex align-items-center">
+            <i class="bi bi-arrow-left-circle me-2"></i> Back to List
+        </a>
+    </div>
 
-<h4>LeaveRecord</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="EmployeeId" class="control-label"></label>
-                <select asp-for="EmployeeId" class ="form-control" asp-items="ViewBag.EmployeeId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="LeaveTypeId" class="control-label"></label>
-                <select asp-for="LeaveTypeId" class ="form-control" asp-items="ViewBag.LeaveTypeId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="StartDate" class="control-label"></label>
-                <input asp-for="StartDate" class="form-control" />
-                <span asp-validation-for="StartDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="EndDate" class="control-label"></label>
-                <input asp-for="EndDate" class="form-control" />
-                <span asp-validation-for="EndDate" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Approved" /> @Html.DisplayNameFor(model => model.Approved)
-                </label>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+    <div class="card mt-3 shadow-sm">
+        <div class="card-body">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none"></div>
+
+                <div class="mb-3">
+                    <label asp-for="EmployeeId" class="form-label fw-semibold">👨‍💼 Select Employee</label>
+                    <select asp-for="EmployeeId" class="form-select" asp-items="ViewBag.EmployeeId">
+                        <option value="">-- Select Employee --</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="LeaveTypeId" class="form-label fw-semibold">📋 Select Leave Type</label>
+                    <select asp-for="LeaveTypeId" class="form-select" asp-items="ViewBag.LeaveTypeId">
+                        <option value="">-- Select Leave Type --</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="StartDate" class="form-label fw-semibold">📅 Start Date</label>
+                    <input asp-for="StartDate" class="form-control" type="date" />
+                    <span asp-validation-for="StartDate" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="EndDate" class="form-label fw-semibold">📅 End Date</label>
+                    <input asp-for="EndDate" class="form-control" type="date" />
+                    <span asp-validation-for="EndDate" class="text-danger small"></span>
+                </div>
+
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" asp-for="Approved" id="approvedCheckbox">
+                    <label class="form-check-label fw-semibold" for="approvedCheckbox">
+                        ✅ Approved
+                    </label>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-success d-flex align-items-center me-2">
+                        <i class="bi bi-check-circle me-2"></i> Create Leave Record
+                    </button>
+
+                    <a asp-action="Index" class="btn btn-secondary d-flex align-items-center">
+                        <i class="bi bi-x-circle me-2"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

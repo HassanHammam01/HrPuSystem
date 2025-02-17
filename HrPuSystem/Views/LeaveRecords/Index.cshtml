@@ -1,59 +1,55 @@
 ﻿@model IEnumerable<HrPuSystem.Models.LeaveRecord>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Leave Records";
 }
 
-<h1>Index</h1>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="text-primary">Leave Records</h2>
+        <a asp-action="Create" class="btn btn-success">➕ Create New Leave Record</a>
+    </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.StartDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EndDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Approved)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Employee)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LeaveType)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.StartDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EndDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Approved)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Employee.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LeaveType.Name)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.LeaveRecordId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.LeaveRecordId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.LeaveRecordId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <div class="table-responsive">
+        <table class="table table-hover table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.StartDate)</th>
+                    <th>@Html.DisplayNameFor(model => model.EndDate)</th>
+                    <th>@Html.DisplayNameFor(model => model.Approved)</th>
+                    <th>@Html.DisplayNameFor(model => model.Employee)</th>
+                    <th>@Html.DisplayNameFor(model => model.LeaveType)</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.StartDate)</td>
+                        <td>@Html.DisplayFor(modelItem => item.EndDate)</td>
+                        <td>
+                            @if (item.Approved)
+                            {
+                                <span class="badge bg-success">Approved</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning text-dark">Pending</span>
+                            }
+                        </td>
+                        <td>@Html.DisplayFor(modelItem => item.Employee.Email)</td>
+                        <td>@Html.DisplayFor(modelItem => item.LeaveType.Name)</td>
+                        <td class="text-center">
+                            <div class="btn-group" role="group">
+                                <a asp-action="Edit" asp-route-id="@item.LeaveRecordId" class="btn btn-sm btn-primary">✏️ Edit</a>
+                                <a asp-action="Details" asp-route-id="@item.LeaveRecordId" class="btn btn-sm btn-info">ℹ️ Details</a>
+                                <a asp-action="Delete" asp-route-id="@item.LeaveRecordId" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this record?');">🗑️ Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

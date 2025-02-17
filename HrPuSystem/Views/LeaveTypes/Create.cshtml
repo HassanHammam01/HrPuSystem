@@ -1,43 +1,53 @@
 ﻿@model HrPuSystem.Models.LeaveType
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create Leave Type";
 }
 
-<h1>Create</h1>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <h2 class="text-primary fw-bold">➕ Create Leave Type</h2>
+        <a asp-action="Index" class="btn btn-secondary d-flex align-items-center">
+            <i class="bi bi-arrow-left-circle me-2"></i> Back to List
+        </a>
+    </div>
 
-<h4>LeaveType</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DefaultDays" class="control-label"></label>
-                <input asp-for="DefaultDays" class="form-control" />
-                <span asp-validation-for="DefaultDays" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsPaid" /> @Html.DisplayNameFor(model => model.IsPaid)
-                </label>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+    <div class="card mt-3 shadow-sm">
+        <div class="card-body">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label fw-semibold">🏷️ Leave Type Name</label>
+                    <input asp-for="Name" class="form-control" placeholder="Enter leave type name..." />
+                    <span asp-validation-for="Name" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="DefaultDays" class="form-label fw-semibold">📆 Default Leave Days</label>
+                    <input asp-for="DefaultDays" class="form-control" type="number" placeholder="Enter number of days..." />
+                    <span asp-validation-for="DefaultDays" class="text-danger small"></span>
+                </div>
+
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" asp-for="IsPaid" id="isPaidCheckbox">
+                    <label class="form-check-label fw-semibold" for="isPaidCheckbox">
+                        💰 Paid Leave
+                    </label>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-success d-flex align-items-center">
+                        <i class="bi bi-check-circle me-2"></i> Create Leave Type
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

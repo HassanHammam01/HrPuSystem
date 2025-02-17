@@ -1,48 +1,62 @@
 ﻿@model HrPuSystem.Models.Employee
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create Employee";
 }
 
-<h1>Create</h1>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <h2 class="text-primary fw-bold">👨‍💼 Create Employee</h2>
+        <a asp-action="Index" class="btn btn-secondary d-flex align-items-center">
+            <i class="bi bi-arrow-left-circle me-2"></i> Back to List
+        </a>
+    </div>
 
-<h4>Employee</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="FullName" class="control-label"></label>
-                <input asp-for="FullName" class="form-control" />
-                <span asp-validation-for="FullName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DateOfHire" class="control-label"></label>
-                <input asp-for="DateOfHire" class="form-control" />
-                <span asp-validation-for="DateOfHire" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="AnnualLeaveBalance" class="control-label"></label>
-                <input asp-for="AnnualLeaveBalance" class="form-control" />
-                <span asp-validation-for="AnnualLeaveBalance" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+    <div class="card mt-3 shadow-sm">
+        <div class="card-body">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none"></div>
+
+                <div class="mb-3">
+                    <label asp-for="FullName" class="form-label fw-semibold">🆔 Full Name</label>
+                    <input asp-for="FullName" class="form-control" placeholder="Enter full name..." />
+                    <span asp-validation-for="FullName" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label fw-semibold">📧 Email</label>
+                    <input asp-for="Email" class="form-control" type="email" placeholder="Enter email..." />
+                    <span asp-validation-for="Email" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="DateOfHire" class="form-label fw-semibold">📅 Date of Hire</label>
+                    <input asp-for="DateOfHire" class="form-control" type="date" />
+                    <span asp-validation-for="DateOfHire" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="AnnualLeaveBalance" class="form-label fw-semibold">🏖️ Annual Leave Balance</label>
+                    <input asp-for="AnnualLeaveBalance" class="form-control" type="number" placeholder="Enter leave balance..." />
+                    <span asp-validation-for="AnnualLeaveBalance" class="text-danger small"></span>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-success d-flex align-items-center me-2">
+                        <i class="bi bi-check-circle me-2"></i> Create Employee
+                    </button>
+
+                    <a asp-action="Index" class="btn btn-secondary d-flex align-items-center">
+                        <i class="bi bi-x-circle me-2"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
