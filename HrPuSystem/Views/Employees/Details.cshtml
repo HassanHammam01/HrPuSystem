@@ -70,7 +70,19 @@
             <!-- Leave Records Table -->
             <div class="card shadow-sm mt-4">
                 <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">Leave Records</h5>
+                    <div class="d-flex align-items-center">
+                        <h5 class="card-title mb-0 me-3">Leave Records</h5>
+                        <form method="get" class="d-flex align-items-center">
+                            <input type="hidden" name="id" value="@Model.EmployeeId" />
+                            <select name="year" class="form-select form-select-sm" onchange="this.form.submit()" style="width: 120px;">
+                                <option value="">All Years</option>
+                                @foreach (var year in ViewBag.AvailableYears)
+                                {
+                                    <option value="@year" selected="@(ViewBag.SelectedYear == year)">@year</option>
+                                }
+                            </select>
+                        </form>
+                    </div>
                     <a asp-controller="LeaveRecords" asp-action="Create" class="btn btn-sm btn-primary">
                         <i class="bi bi-plus-lg me-1"></i>New Leave Request
                     </a>

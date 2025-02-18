@@ -28,21 +28,43 @@ namespace HrPuSystem.Controllers
         }
 
         // GET: Employees/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id, int? year)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
+            // Set current year as default only if year parameter is not provided in the URL
+            if (!Request.Query.ContainsKey("year"))
+            {
+                year = DateTime.Now.Year;
+            }
+
             var employee = await _context.Employees
-                .Include(e => e.LeaveRecords)
+                .Include(e => e.LeaveRecords.Where(lr => !year.HasValue || lr.StartDate.Year == year.Value))
                     .ThenInclude(lr => lr.LeaveType)
                 .FirstOrDefaultAsync(m => m.EmployeeId == id);
 
             if (employee == null)
             {
                 return NotFound();
+            }
+
+            ViewBag.SelectedYear = year;
+            ViewBag.AvailableYears = await _context.LeaveRecords
+                .Where(lr => lr.EmployeeId == id)
+                .Select(lr => lr.StartDate.Year)
+                .Distinct()
+                .OrderByDescending(y => y)
+                .ToListAsync();
+
+            // Add current year if not in the list
+            if (!ViewBag.AvailableYears.Contains(DateTime.Now.Year))
+            {
+                var availableYears = ViewBag.AvailableYears as List<int> ?? new List<int>();
+                availableYears.Insert(0, DateTime.Now.Year);
+                ViewBag.AvailableYears = availableYears;
             }
 
             return View(employee);

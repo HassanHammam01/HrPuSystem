@@ -21,6 +21,11 @@ body {
   margin-bottom: 60px;
 }
 
+.centered {
+    max-width: fit-content;
+    margin-inline: auto;
+}
+
 /* Mobile Menu Styles */
 @media (max-width: 991.98px) {
     .navbar {

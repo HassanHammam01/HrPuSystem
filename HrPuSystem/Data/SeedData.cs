@@ -20,14 +20,15 @@ namespace HrPuSystem.Data
             }
 
             // Create admin user
-            var adminEmail = "admin@hrpu.com";
-            var adminUser = await userManager.FindByEmailAsync(adminEmail);
+            var adminName = "admin";
+            var adminUser = await userManager.FindByNameAsync(adminName);
 
             if (adminUser == null)
             {
+                var adminEmail = "admin@hrpu.com";
                 adminUser = new IdentityUser
                 {
-                    UserName = adminEmail,
+                    UserName = adminName,
                     Email = adminEmail,
                     EmailConfirmed = true
                 };
@@ -36,6 +37,26 @@ namespace HrPuSystem.Data
                 if (result.Succeeded)
                 {
                     await userManager.AddToRoleAsync(adminUser, "Admin");
+                }
+            }
+            // Create manager user
+            var managerName = "manager";
+            var managerUser = await userManager.FindByNameAsync(managerName);
+
+            if (managerUser == null)
+            {
+                var managerEmail = "manager@hrpu.com";
+                managerUser = new IdentityUser
+                {
+                    UserName = managerName,
+                    Email = managerEmail,
+                    EmailConfirmed = true
+                };
+
+                var result = await userManager.CreateAsync(managerUser, "Manager123!");
+                if (result.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(managerUser, "Manager");
                 }
             }
         }
