@@ -11,89 +11,115 @@
     </div>
 
     <!-- Summary Cards -->
-    <div class="row g-4">
-        <div class="col-md-3">
+    <div class="row g-3">
+        <div class="col-lg-3 col-md-6">
             <div class="card">
-                <div class="card-body p-4">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <div class="avatar-circle bg-primary bg-opacity-10 text-primary">
+                <div class="card-body p-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="avatar-circle-sm bg-primary bg-opacity-10 text-primary">
                             <i class="bi bi-people"></i>
                         </div>
                         <span class="badge bg-primary-subtle text-primary rounded-pill">Total</span>
                     </div>
-                    <h3 class="h4 mb-1">@ViewBag.TotalEmployees</h3>
-                    <p class="text-secondary mb-0">Employees</p>
+                    <h3 class="h5 mb-0">@ViewBag.TotalEmployees</h3>
+                    <p class="text-secondary small mb-0">Employees</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-lg-3 col-md-6">
             <div class="card">
-                <div class="card-body p-4">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <div class="avatar-circle bg-success bg-opacity-10 text-success">
+                <div class="card-body p-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="avatar-circle-sm bg-success bg-opacity-10 text-success">
                             <i class="bi bi-check-circle"></i>
                         </div>
                         <span class="badge bg-success-subtle text-success rounded-pill">Active</span>
                     </div>
-                    <h3 class="h4 mb-1">@ViewBag.ActiveLeaveRequests</h3>
-                    <p class="text-secondary mb-0">Active Leaves</p>
+                    <h3 class="h5 mb-0">@ViewBag.ActiveLeaveRequests</h3>
+                    <p class="text-secondary small mb-0">Active Leaves</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-lg-3 col-md-6">
             <div class="card">
-                <div class="card-body p-4">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <div class="avatar-circle bg-warning bg-opacity-10 text-warning">
+                <div class="card-body p-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="avatar-circle-sm bg-warning bg-opacity-10 text-warning">
                             <i class="bi bi-clock"></i>
                         </div>
                         <span class="badge bg-warning-subtle text-warning rounded-pill">Pending</span>
                     </div>
-                    <h3 class="h4 mb-1">@ViewBag.PendingLeaveRequests</h3>
-                    <p class="text-secondary mb-0">Pending Requests</p>
+                    <h3 class="h5 mb-0">@ViewBag.PendingLeaveRequests</h3>
+                    <p class="text-secondary small mb-0">Pending Requests</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-lg-3 col-md-6">
             <div class="card">
-                <div class="card-body p-4">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <div class="avatar-circle bg-info bg-opacity-10 text-info">
+                <div class="card-body p-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="avatar-circle-sm bg-info bg-opacity-10 text-info">
                             <i class="bi bi-calendar2-check"></i>
                         </div>
                         <span class="badge bg-info-subtle text-info rounded-pill">Types</span>
                     </div>
-                    <h3 class="h4 mb-1">@ViewBag.TotalLeaveTypes</h3>
-                    <p class="text-secondary mb-0">Leave Types</p>
+                    <h3 class="h5 mb-0">@ViewBag.TotalLeaveTypes</h3>
+                    <p class="text-secondary small mb-0">Leave Types</p>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Quick Actions -->
-    <div class="row g-4">
-        <div class="col-md-6">
-            <div class="card h-100">
-                <div class="card-body p-4">
-                    <h5 class="card-title mb-4">Quick Actions</h5>
-                    <div class="d-flex flex-wrap gap-2">
-                        <a asp-controller="Employees" asp-action="Create" class="btn btn-outline-primary">
+    <div class="row g-3">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body p-3">
+                    <h6 class="card-subtitle mb-3 text-secondary">Quick Actions</h6>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <a asp-controller="Employees" asp-action="Create" class="btn btn-primary">
                             <i class="bi bi-person-plus me-2"></i>New Employee
                         </a>
-                        <a asp-controller="LeaveRecords" asp-action="Create" class="btn btn-outline-success">
+                        <a asp-controller="LeaveRecords" asp-action="Create" class="btn btn-success">
                             <i class="bi bi-calendar-plus me-2"></i>New Leave Request
                         </a>
-                        <a asp-controller="LeaveTypes" asp-action="Create" class="btn btn-outline-info">
+                        <a asp-controller="LeaveTypes" asp-action="Create" class="btn btn-info text-white">
                             <i class="bi bi-plus-circle me-2"></i>New Leave Type
-                        </a>
-                        <a asp-controller="LeaveRecords" asp-action="Index" class="btn btn-outline-warning">
-                            <i class="bi bi-list-check me-2"></i>Review Requests
                         </a>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
+    </div>
+
+    <!-- Charts and Distribution -->
+    <div class="row g-4">
+        <div class="col-md-8">
+            <div class="card h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="card-title mb-0">Leave Requests Trend</h5>
+                        <select class="form-select form-select-sm" id="yearFilter" style="width: auto;">
+                            @foreach (var year in ViewBag.AvailableYears)
+                            {
+                                if (year == ViewBag.SelectedYear)
+                                {
+                                    <option value="@year" selected>@year</option>
+                                }
+                                else
+                                {
+                                    <option value="@year">@year</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="chart-container" style="position: relative; height: 300px;">
+                        <canvas id="leavesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
             <div class="card h-100">
                 <div class="card-body p-4">
                     <h5 class="card-title mb-4">Leave Type Distribution</h5>
@@ -118,66 +144,87 @@
         </div>
     </div>
 
-    <!-- Recent Leave Requests -->
+    <!-- Employee Leave Summary -->
     <div class="card">
         <div class="card-body p-4">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h5 class="card-title mb-0">Recent Leave Requests</h5>
-                <a asp-controller="LeaveRecords" asp-action="Index" class="btn btn-sm btn-outline-primary">
-                    View All
-                </a>
+                <h5 class="card-title mb-0">Employee Leave Summary</h5>
+                <div class="d-flex gap-2">
+                    <select class="form-select form-select-sm" id="monthFilter">
+                        <option value="">All Time</option>
+                        <option value="1">January</option>
+                        <option value="2">February</option>
+                        <option value="3">March</option>
+                        <option value="4">April</option>
+                        <option value="5">May</option>
+                        <option value="6">June</option>
+                        <option value="7">July</option>
+                        <option value="8">August</option>
+                        <option value="9">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                    </select>
+                    <a asp-controller="Employees" asp-action="Index" class="btn btn-sm btn-outline-primary">
+                        View All
+                    </a>
+                </div>
             </div>
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
                     <thead>
                         <tr>
                             <th>Employee</th>
-                            <th>Leave Type</th>
-                            <th>Duration</th>
-                            <th class="text-center">Status</th>
+                            <th>Contact</th>
+                            <th>Date Hired</th>
+                            <th class="text-center">Annual Leave Balance</th>
+                            <th class="text-center">Active Leaves</th>
+                            <th class="text-center">Total Leaves</th>
                             <th class="text-end">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var record in ViewBag.RecentLeaveRequests)
+                        @foreach (var employee in ViewBag.EmployeeSummary)
                         {
                             <tr>
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <div class="avatar-circle-sm bg-primary bg-opacity-10 text-primary me-2">
-                                            @record.Employee.FullName.Substring(0, 1).ToUpper()
+                                            @employee.FullName.Substring(0, 1).ToUpper()
                                         </div>
-                                        <div>@record.Employee.FullName</div>
+                                        <div>@employee.FullName</div>
                                     </div>
-                                </td>
-                                <td>
-                                    <span class="badge bg-info-subtle text-info rounded-pill">
-                                        @record.LeaveType.Name
-                                    </span>
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <i class="bi bi-calendar-range text-secondary me-2"></i>
-                                        <span>@((record.EndDate - record.StartDate).Days + 1) days</span>
+                                        <i class="bi bi-envelope text-secondary me-2"></i>
+                                        <span>@employee.Email</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-calendar2 text-secondary me-2"></i>
+                                        <span>@employee.DateOfHire.ToString("MMM dd, yyyy")</span>
                                     </div>
                                 </td>
                                 <td class="text-center">
-                                    @if (record.Approved)
-                                    {
-                                        <span class="badge bg-success-subtle text-success rounded-pill">
-                                            <i class="bi bi-check-circle me-1"></i>Approved
-                                        </span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-warning-subtle text-warning rounded-pill">
-                                            <i class="bi bi-clock me-1"></i>Pending
-                                        </span>
-                                    }
+                                    <span class="badge bg-success-subtle text-success rounded-pill">
+                                        @employee.AnnualLeaveBalance days
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-primary-subtle text-primary rounded-pill">
+                                        @employee.ActiveLeaves
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-secondary-subtle text-secondary rounded-pill">
+                                        @employee.TotalLeaves
+                                    </span>
                                 </td>
                                 <td class="text-end">
-                                    <a asp-controller="LeaveRecords" asp-action="Details"
-                                        asp-route-id="@record.LeaveRecordId" class="btn btn-sm btn-outline-secondary">
+                                    <a asp-controller="Employees" asp-action="Details" asp-route-id="@employee.EmployeeId"
+                                        class="btn btn-sm btn-outline-secondary">
                                         View
                                     </a>
                                 </td>
@@ -211,12 +258,16 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: 500;
+    }
+
+    .avatar-circle-sm i {
+        font-size: 1rem;
     }
 
     .badge {
         font-weight: 500;
-        padding: 0.5rem 0.75rem;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
     }
 
     .progress {
@@ -231,4 +282,73 @@
     .btn-sm {
         padding: 0.25rem 0.75rem;
     }
+
+    .form-select-sm {
+        min-width: 120px;
+    }
+
+    .chart-container {
+        position: relative;
+        height: 300px;
+        width: 100%;
+    }
+
+    .chart-container canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
 </style>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Chart configuration
+        const ctx = document.getElementById('leavesChart').getContext('2d');
+        const leavesChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(Json.Serialize(ViewBag.MonthLabels)),
+                datasets: [{
+                    label: 'Leave Requests (@ViewBag.SelectedYear)',
+                    data: @Html.Raw(Json.Serialize(ViewBag.MonthlyLeaves)),
+                    backgroundColor: 'rgba(37, 99, 235, 0.2)',
+                    borderColor: 'rgba(37, 99, 235, 1)',
+                    borderWidth: 1,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+        // Year filter handler
+        document.getElementById('yearFilter').addEventListener('change', function (e) {
+            const year = e.target.value;
+            window.location.href = `?year=${year}`;
+        });
+
+        // Month filter handler
+        document.getElementById('monthFilter').addEventListener('change', function (e) {
+            const month = e.target.value;
+            // TODO: Add filter functionality
+        });
+    </script>
+}

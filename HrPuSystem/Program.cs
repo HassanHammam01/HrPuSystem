@@ -8,10 +8,10 @@ namespace HrPuSystem
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            
+
             if (builder.Environment.IsDevelopment())
             {
                 var localDb = builder.Configuration.GetConnectionString("localdb")
@@ -31,6 +31,7 @@ namespace HrPuSystem
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             builder.Services.AddControllersWithViews();
@@ -62,6 +63,13 @@ namespace HrPuSystem
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
             app.MapRazorPages();
+
+            // Seed roles and admin user
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                await SeedData.Initialize(services);
+            }
 
             app.Run();
         }

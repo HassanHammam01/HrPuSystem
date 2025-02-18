@@ -42,11 +42,15 @@ namespace HrPuSystem.Services
                 };
 
                 _context.LeaveRecords.Add(leaveRecord);
-                
-                employee.SetAnnualLeaveBalance();
-                _context.Update(employee);
-                
+
+
                 await _context.SaveChangesAsync();
+                if (approved)
+                {
+                    employee.SetAnnualLeaveBalance();
+                    _context.Update(employee);
+                    await _context.SaveChangesAsync();
+                }
             }
             catch (Exception ex)
             {

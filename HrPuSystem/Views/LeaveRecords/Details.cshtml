@@ -94,17 +94,19 @@
                         </div>
                     </div>
 
-                    <hr class="my-4">
-
-                    <div class="d-flex justify-content-end gap-2">
-                        <a asp-action="Edit" asp-route-id="@Model.LeaveRecordId" class="btn btn-primary">
-                            <i class="bi bi-pencil me-2"></i>Edit Record
-                        </a>
-                        <button type="button" class="btn btn-outline-danger"
-                            onclick="confirmDelete(@Model.LeaveRecordId)">
-                            <i class="bi bi-trash me-2"></i>Delete
-                        </button>
-                    </div>
+                    @if (!Model.Approved)
+                    {
+                        <hr class="my-4">
+                        <div class="d-flex justify-content-end gap-2">
+                            <a asp-action="Edit" asp-route-id="@Model.LeaveRecordId" class="btn btn-primary">
+                                <i class="bi bi-pencil me-2"></i>Edit Record
+                            </a>
+                            <button type="button" class="btn btn-outline-danger"
+                                onclick="confirmDelete(@Model.LeaveRecordId)">
+                                <i class="bi bi-trash me-2"></i>Delete
+                            </button>
+                        </div>
+                    }
                 </div>
             </div>
         </div>

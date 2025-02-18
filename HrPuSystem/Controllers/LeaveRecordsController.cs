@@ -1,13 +1,14 @@
 ﻿using HrPuSystem.Data;
 using HrPuSystem.Models;
 using HrPuSystem.Services;
-
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace HrPuSystem.Controllers
 {
+    [Authorize(Roles = "Admin,Manager")]
     public class LeaveRecordsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -77,11 +78,17 @@ namespace HrPuSystem.Controllers
                 return NotFound();
             }
 
-            var leaveRecord = await _context.LeaveRecords.FindAsync(id);
+            var leaveRecord = await _context.LeaveRecords.Include(lr => lr.Employee).FirstOrDefaultAsync(lr => lr.LeaveRecordId == id);
             if (leaveRecord == null)
             {
                 return NotFound();
             }
+
+            if (leaveRecord.Approved)
+            {
+                return RedirectToAction(nameof(Details), new { id = leaveRecord.LeaveRecordId });
+            }
+
             ViewData["EmployeeId"] = new SelectList(_context.Employees, "EmployeeId", "Email", leaveRecord.EmployeeId);
             ViewData["LeaveTypeId"] = new SelectList(_context.LeaveTypes, "LeaveTypeId", "Name", leaveRecord.LeaveTypeId);
             return View(leaveRecord);
@@ -97,6 +104,12 @@ namespace HrPuSystem.Controllers
             if (id != leaveRecord.LeaveRecordId)
             {
                 return NotFound();
+            }
+
+            var existingRecord = await _context.LeaveRecords.AsNoTracking().FirstOrDefaultAsync(lr => lr.LeaveRecordId == id);
+            if (existingRecord != null && existingRecord.Approved)
+            {
+                return RedirectToAction(nameof(Details), new { id = leaveRecord.LeaveRecordId });
             }
 
             if (ModelState.IsValid)
@@ -141,6 +154,11 @@ namespace HrPuSystem.Controllers
                 return NotFound();
             }
 
+            if (leaveRecord.Approved)
+            {
+                return RedirectToAction(nameof(Details), new { id = leaveRecord.LeaveRecordId });
+            }
+
             return View(leaveRecord);
         }
 
@@ -150,12 +168,40 @@ namespace HrPuSystem.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var leaveRecord = await _context.LeaveRecords.FindAsync(id);
-            if (leaveRecord != null)
+            if (leaveRecord != null && !leaveRecord.Approved)
             {
                 _context.LeaveRecords.Remove(leaveRecord);
+                await _context.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        // POST: LeaveRecords/Approve/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Approve(int id)
+        {
+            var leaveRecord = await _context.LeaveRecords
+                .Include(l => l.Employee).ThenInclude(e => e.LeaveRecords)
+                .Include(l => l.LeaveType)
+                .FirstOrDefaultAsync(m => m.LeaveRecordId == id);
+
+            if (leaveRecord == null)
+            {
+                return NotFound();
+            }
+
+            if (!leaveRecord.Approved)
+            {
+                leaveRecord.Approved = true;
+                _context.Update(leaveRecord);
+                await _context.SaveChangesAsync();
+                leaveRecord.Employee.SetAnnualLeaveBalance();
+                _context.Update(leaveRecord.Employee);
+                await _context.SaveChangesAsync();
+            }
+
             return RedirectToAction(nameof(Index));
         }
 

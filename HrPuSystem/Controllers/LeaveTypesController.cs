@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ using HrPuSystem.Models;
 
 namespace HrPuSystem.Controllers
 {
+    [Authorize(Roles = "Admin,Manager")]
     public class LeaveTypesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -44,6 +46,7 @@ namespace HrPuSystem.Controllers
         }
 
         // GET: LeaveTypes/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -54,6 +57,7 @@ namespace HrPuSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("LeaveTypeId,Name,DefaultDays,IsPaid")] LeaveType leaveType)
         {
             if (ModelState.IsValid)
@@ -117,6 +121,7 @@ namespace HrPuSystem.Controllers
         }
 
         // GET: LeaveTypes/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -137,6 +142,7 @@ namespace HrPuSystem.Controllers
         // POST: LeaveTypes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var leaveType = await _context.LeaveTypes.FindAsync(id);

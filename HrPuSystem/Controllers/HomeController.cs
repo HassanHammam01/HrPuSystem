@@ -1,11 +1,13 @@
 using HrPuSystem.Data;
 using HrPuSystem.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace HrPuSystem.Controllers
 {
+    [Authorize(Roles = "Admin,Manager")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -17,15 +19,22 @@ namespace HrPuSystem.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        [HttpGet("/")]
+        [HttpGet("/Home")]
+        [HttpGet("/Home/Index")]
+        public async Task<IActionResult> Index(int? year = null)
         {
             await UpdateAnnualLeavesAsync();
+
+            var today = DateTime.Today;
+            var selectedYear = year ?? today.Year;
+            var startOfYear = new DateTime(selectedYear, 1, 1);
+            var months = Enumerable.Range(1, 12).ToList();
 
             // Get total employees
             ViewBag.TotalEmployees = await _context.Employees.CountAsync();
 
             // Get active and pending leave requests
-            var today = DateTime.Today;
             ViewBag.ActiveLeaveRequests = await _context.LeaveRecords
                 .CountAsync(lr => lr.Approved && lr.StartDate <= today && lr.EndDate >= today);
 
@@ -46,20 +55,55 @@ namespace HrPuSystem.Controllers
                 {
                     Name = g.Key,
                     Count = g.Count(),
-                    Percentage = (int)((double)g.Count() / allLeaveRequests.Count * 100)
+                    Percentage = allLeaveRequests.Any() ? (int)((double)g.Count() / allLeaveRequests.Count * 100) : 0
                 })
                 .OrderByDescending(lt => lt.Count)
                 .ToList();
 
             ViewBag.LeaveTypeDistribution = leaveTypeGroups;
 
-            // Get recent leave requests
-            ViewBag.RecentLeaveRequests = await _context.LeaveRecords
-                .Include(lr => lr.Employee)
-                .Include(lr => lr.LeaveType)
-                .OrderByDescending(lr => lr.LeaveRecordId)
-                .Take(5)
+            // Get monthly leave data for chart with year filter
+            var monthlyLeaves = await _context.LeaveRecords
+                .Where(lr => lr.StartDate.Year == selectedYear)
+                .GroupBy(lr => lr.StartDate.Month)
+                .Select(g => new { Month = g.Key, Count = g.Count() })
+                .ToDictionaryAsync(x => x.Month, x => x.Count);
+
+            ViewBag.MonthLabels = months.Select(m => new DateTime(2024, m, 1).ToString("MMMM")).ToArray();
+            ViewBag.MonthlyLeaves = months.Select(m => monthlyLeaves.ContainsKey(m) ? monthlyLeaves[m] : 0).ToArray();
+
+            // Get available years for the filter
+            var availableYears = await _context.LeaveRecords
+                .Select(lr => lr.StartDate.Year)
+                .Distinct()
+                .OrderByDescending(y => y)
                 .ToListAsync();
+
+            if (!availableYears.Contains(today.Year))
+            {
+                availableYears.Insert(0, today.Year);
+            }
+
+            ViewBag.AvailableYears = availableYears;
+            ViewBag.SelectedYear = selectedYear;
+
+            // Get employee summary
+            var employees = await _context.Employees
+                .Include(e => e.LeaveRecords)
+                .Select(e => new
+                {
+                    e.EmployeeId,
+                    e.FullName,
+                    e.Email,
+                    e.DateOfHire,
+                    e.AnnualLeaveBalance,
+                    ActiveLeaves = e.LeaveRecords.Count(lr => lr.Approved && lr.StartDate <= today && lr.EndDate >= today),
+                    TotalLeaves = e.LeaveRecords.Count()
+                })
+                .OrderBy(e => e.FullName)
+                .ToListAsync();
+
+            ViewBag.EmployeeSummary = employees;
 
             return View();
         }
@@ -78,11 +122,13 @@ namespace HrPuSystem.Controllers
             await _context.SaveChangesAsync();
         }
 
+        [AllowAnonymous]
         public IActionResult Privacy()
         {
             return View();
         }
 
+        [AllowAnonymous]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

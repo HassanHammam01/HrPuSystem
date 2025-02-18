@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ using HrPuSystem.Models;
 
 namespace HrPuSystem.Controllers
 {
+    [Authorize(Roles = "Admin,Manager")]
     public class EmployeesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -34,7 +36,10 @@ namespace HrPuSystem.Controllers
             }
 
             var employee = await _context.Employees
+                .Include(e => e.LeaveRecords)
+                    .ThenInclude(lr => lr.LeaveType)
                 .FirstOrDefaultAsync(m => m.EmployeeId == id);
+
             if (employee == null)
             {
                 return NotFound();
@@ -44,6 +49,7 @@ namespace HrPuSystem.Controllers
         }
 
         // GET: Employees/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -54,6 +60,7 @@ namespace HrPuSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(string fullName, string email, DateTime dateOfHire)
         {
             var employee = new Employee(fullName, email, dateOfHire);
@@ -65,6 +72,7 @@ namespace HrPuSystem.Controllers
         }
 
         // GET: Employees/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -85,6 +93,7 @@ namespace HrPuSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, string fullName, string email, DateTime dateOfHire)
         {
             var employee = await _context.Employees.Include(e => e.LeaveRecords).ThenInclude(lr => lr.LeaveType)
@@ -115,6 +124,7 @@ namespace HrPuSystem.Controllers
         }
 
         // GET: Employees/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -135,6 +145,7 @@ namespace HrPuSystem.Controllers
         // POST: Employees/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var employee = await _context.Employees.FindAsync(id);
