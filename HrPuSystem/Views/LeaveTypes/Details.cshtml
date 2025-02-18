@@ -1,36 +1,48 @@
 ﻿@model HrPuSystem.Models.LeaveType
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Leave Type Details";
 }
 
-<h1>Details</h1>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <h2 class="text-primary fw-bold">ℹ️ Leave Type Details</h2>
+        <a asp-action="Index" class="btn btn-secondary d-flex align-items-center">
+            <i class="bi bi-arrow-left-circle me-2"></i> Back to List
+        </a>
+    </div>
 
-<div>
-    <h4>LeaveType</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DefaultDays)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DefaultDays)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsPaid)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsPaid)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.LeaveTypeId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <div class="card mt-3 shadow-sm">
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3 fw-semibold">🏷️ Leave Type Name</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Name)</dd>
+
+                <dt class="col-sm-3 fw-semibold">📆 Default Leave Days</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.DefaultDays) days</dd>
+
+                <dt class="col-sm-3 fw-semibold">💰 Paid Status</dt>
+                <dd class="col-sm-9">
+                    @if (Model.IsPaid)
+                    {
+                        <span class="badge bg-success">✅ Paid</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">❌ Unpaid</span>
+                    }
+                </dd>
+            </dl>
+
+            <div class="d-flex justify-content-end">
+                <a asp-action="Edit" asp-route-id="@Model?.LeaveTypeId" class="btn btn-warning d-flex align-items-center me-2">
+                    <i class="bi bi-pencil-square me-2"></i> Edit
+                </a>
+
+                <a asp-action="Index" class="btn btn-secondary d-flex align-items-center">
+                    <i class="bi bi-arrow-left-circle me-2"></i> Back to List
+                </a>
+            </div>
+        </div>
+    </div>
 </div>

@@ -1,48 +1,45 @@
 ﻿@model HrPuSystem.Models.Employee
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Employee Details";
 }
 
-<h1>Details</h1>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <h2 class="text-primary fw-bold">ℹ️ Employee Details</h2>
+        <a asp-action="Index" class="btn btn-secondary d-flex align-items-center">
+            <i class="bi bi-arrow-left-circle me-2"></i> Back to List
+        </a>
+    </div>
 
-<div>
-    <h4>Employee</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FullName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FullName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DateOfHire)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DateOfHire)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AnnualLeaveBalance)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AnnualLeaveBalance)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.YearsOfService)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.YearsOfService)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.EmployeeId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <div class="card mt-3 shadow-sm">
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3 fw-semibold">🆔 Full Name</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.FullName)</dd>
+
+                <dt class="col-sm-3 fw-semibold">📧 Email</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Email)</dd>
+
+                <dt class="col-sm-3 fw-semibold">📅 Date of Hire</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.DateOfHire)</dd>
+
+                <dt class="col-sm-3 fw-semibold">🏖️ Annual Leave Balance</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.AnnualLeaveBalance) days</dd>
+
+                <dt class="col-sm-3 fw-semibold">🏖️ Years of Service</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.YearsOfService) years</dd>
+            </dl>
+
+            <div class="d-flex justify-content-end">
+                <a asp-action="Edit" asp-route-id="@Model?.EmployeeId" class="btn btn-warning d-flex align-items-center me-2">
+                    <i class="bi bi-pencil-square me-2"></i> Edit
+                </a>
+
+                <a asp-action="Index" class="btn btn-secondary d-flex align-items-center">
+                    <i class="bi bi-arrow-left-circle me-2"></i> Back to List
+                </a>
+            </div>
+        </div>
+    </div>
 </div>

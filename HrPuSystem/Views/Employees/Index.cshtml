@@ -1,53 +1,44 @@
 ﻿@model IEnumerable<HrPuSystem.Models.Employee>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Employee List";
 }
 
-<h1>Index</h1>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="text-primary">Employee List</h2>
+        <a asp-action="Create" class="btn btn-success">➕ Add New Employee</a>
+    </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.FullName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DateOfHire)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AnnualLeaveBalance)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.FullName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateOfHire)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AnnualLeaveBalance)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.EmployeeId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.EmployeeId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.EmployeeId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <div class="table-responsive">
+        <table class="table table-hover table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.FullName)</th>
+                    <th>@Html.DisplayNameFor(model => model.Email)</th>
+                    <th>@Html.DisplayNameFor(model => model.DateOfHire)</th>
+                    <th>@Html.DisplayNameFor(model => model.AnnualLeaveBalance)</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.FullName)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                        <td>@Html.DisplayFor(modelItem => item.DateOfHire)</td>
+                        <td>@Html.DisplayFor(modelItem => item.AnnualLeaveBalance)</td>
+                        <td class="text-center">
+                            <div class="btn-group" role="group">
+                                <a asp-action="Edit" asp-route-id="@item.EmployeeId" class="btn btn-sm btn-primary">✏️ Edit</a>
+                                <a asp-action="Details" asp-route-id="@item.EmployeeId" class="btn btn-sm btn-info">ℹ️ Details</a>
+                                <a asp-action="Delete" asp-route-id="@item.EmployeeId" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this employee?');">🗑️ Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
