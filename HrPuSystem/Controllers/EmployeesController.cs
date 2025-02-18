@@ -28,7 +28,7 @@ namespace HrPuSystem.Controllers
         }
 
         // GET: Employees/Details/5
-        public async Task<IActionResult> Details(int? id, int? year)
+        public async Task<IActionResult> Details(int? id, int? year, string? status)
         {
             if (id == null)
             {
@@ -42,7 +42,11 @@ namespace HrPuSystem.Controllers
             }
 
             var employee = await _context.Employees
-                .Include(e => e.LeaveRecords.Where(lr => !year.HasValue || lr.StartDate.Year == year.Value))
+                .Include(e => e.LeaveRecords.Where(lr =>
+                    (!year.HasValue || lr.StartDate.Year == year.Value) &&
+                    (string.IsNullOrEmpty(status) ||
+                    (status == "approved" && lr.Approved) ||
+                    (status == "pending" && !lr.Approved))))
                     .ThenInclude(lr => lr.LeaveType)
                 .FirstOrDefaultAsync(m => m.EmployeeId == id);
 
@@ -52,6 +56,7 @@ namespace HrPuSystem.Controllers
             }
 
             ViewBag.SelectedYear = year;
+            ViewBag.SelectedStatus = status;
             ViewBag.AvailableYears = await _context.LeaveRecords
                 .Where(lr => lr.EmployeeId == id)
                 .Select(lr => lr.StartDate.Year)

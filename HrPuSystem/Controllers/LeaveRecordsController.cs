@@ -21,10 +21,40 @@ namespace HrPuSystem.Controllers
         }
 
         // GET: LeaveRecords
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? year, string? status)
         {
-            var applicationDbContext = _context.LeaveRecords.Include(l => l.Employee).Include(l => l.LeaveType);
-            return View(await applicationDbContext.ToListAsync());
+            // Set current year as default only if year parameter is not provided in the URL
+            if (!Request.Query.ContainsKey("year"))
+            {
+                year = DateTime.Now.Year;
+            }
+
+            var query = _context.LeaveRecords
+                .Include(l => l.Employee)
+                .Include(l => l.LeaveType)
+                .Where(lr =>
+                    (!year.HasValue || lr.StartDate.Year == year.Value) &&
+                    (string.IsNullOrEmpty(status) ||
+                    (status == "approved" && lr.Approved) ||
+                    (status == "pending" && !lr.Approved)));
+
+            ViewBag.SelectedYear = year;
+            ViewBag.SelectedStatus = status;
+            ViewBag.AvailableYears = await _context.LeaveRecords
+                .Select(lr => lr.StartDate.Year)
+                .Distinct()
+                .OrderByDescending(y => y)
+                .ToListAsync();
+
+            // Add current year if not in the list
+            if (!ViewBag.AvailableYears.Contains(DateTime.Now.Year))
+            {
+                var availableYears = ViewBag.AvailableYears as List<int> ?? new List<int>();
+                availableYears.Insert(0, DateTime.Now.Year);
+                ViewBag.AvailableYears = availableYears;
+            }
+
+            return View(await query.OrderByDescending(lr => lr.StartDate).ToListAsync());
         }
 
         // GET: LeaveRecords/Details/5
