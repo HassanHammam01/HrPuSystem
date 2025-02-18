@@ -1,22 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using HrPuSystem.Data;
+using HrPuSystem.Models;
+using HrPuSystem.Services;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using HrPuSystem.Data;
-using HrPuSystem.Models;
 
 namespace HrPuSystem.Controllers
 {
     public class LeaveRecordsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly LeaveRecordService _leaveRecordService;
 
-        public LeaveRecordsController(ApplicationDbContext context)
+        public LeaveRecordsController(ApplicationDbContext context, LeaveRecordService leaveRecordService)
         {
             _context = context;
+            _leaveRecordService = leaveRecordService;
         }
 
         // GET: LeaveRecords
@@ -59,17 +59,14 @@ namespace HrPuSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("LeaveRecordId,EmployeeId,LeaveTypeId,StartDate,EndDate,Approved")] LeaveRecord leaveRecord)
+        public async Task<IActionResult> Create(int employeeId, int leaveTypeId, DateTime startDate, DateTime endDate, bool approved = true)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(leaveRecord);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["EmployeeId"] = new SelectList(_context.Employees, "EmployeeId", "Email", leaveRecord.EmployeeId);
-            ViewData["LeaveTypeId"] = new SelectList(_context.LeaveTypes, "LeaveTypeId", "Name", leaveRecord.LeaveTypeId);
-            return View(leaveRecord);
+            ViewData["LeaveTypeId"] = new SelectList(_context.LeaveTypes.OrderBy(lt => lt.Name), "LeaveTypeId", "Name", leaveTypeId);
+            ViewData["EmployeeId"] = new SelectList(_context.Employees, "EmployeeId", "FullName", employeeId);
+
+            await _leaveRecordService.RequestLeaveAsync(employeeId, leaveTypeId, startDate, endDate, approved);
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: LeaveRecords/Edit/5

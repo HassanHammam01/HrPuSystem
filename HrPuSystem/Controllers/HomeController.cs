@@ -24,16 +24,14 @@ namespace HrPuSystem.Controllers
 
         private async Task UpdateAnnualLeavesAsync()
         {
-            var employees = await _context.Employees.Include(e => e.LeaveRecords).ToListAsync();
-            
+            var employees = await _context.Employees.Include(e => e.LeaveRecords).ThenInclude(lr => lr.LeaveType)
+                .ToListAsync();
+
             foreach (var employee in employees)
-            {
-                employee.SetAnnualLeaveBalanceAfterYearAndAHalf();
-                employee.AddAnnualLeaves();
-            }
+                employee.SetAnnualLeaveBalance();
 
             _context.UpdateRange(employees);
-            
+
             await _context.SaveChangesAsync();
         }
 

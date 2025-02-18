@@ -1,5 +1,6 @@
 using HrPuSystem.Data;
 using HrPuSystem.Services;
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,15 +11,28 @@ namespace HrPuSystem
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            
+            if (builder.Environment.IsDevelopment())
+            {
+                var localDb = builder.Configuration.GetConnectionString("localdb")
+                  ?? throw new InvalidOperationException("Connection string 'localdb' not found.");
 
-            // Add services to the container.
-            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-            builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(connectionString));
+                builder.Services.AddDbContext<ApplicationDbContext>(options =>
+                    options.UseSqlServer(localDb));
+            }
+            else
+            {
+                var sqlServerConnectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+                  ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+                builder.Services.AddDbContext<ApplicationDbContext>(options =>
+                    options.UseSqlServer(sqlServerConnectionString));
+            }
+
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
             builder.Services.AddControllersWithViews();
 
             builder.Services.AddScoped<LeaveRecordService>();

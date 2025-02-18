@@ -54,22 +54,14 @@ namespace HrPuSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(string fullName, string email, DateTime dateOfHire, int annualLeaveBalance)
+        public async Task<IActionResult> Create(string fullName, string email, DateTime dateOfHire)
         {
-            var employee = new Employee()
-            {
-                FullName = fullName,
-                AnnualLeaveBalance = annualLeaveBalance,
-                DateOfHire = dateOfHire,
-                Email = email
-            };
-            if (ModelState.IsValid)
-            {
-                _context.Add(employee);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(employee);
+            var employee = new Employee(fullName, email, dateOfHire);
+
+            await _context.AddAsync(employee);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Employees/Edit/5
@@ -93,34 +85,33 @@ namespace HrPuSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("EmployeeId,FullName,Email,DateOfHire,AnnualLeaveBalance")] Employee employee)
+        public async Task<IActionResult> Edit(int id, string fullName, string email, DateTime dateOfHire)
         {
-            if (id != employee.EmployeeId)
+            var employee = await _context.Employees.Include(e => e.LeaveRecords).ThenInclude(lr => lr.LeaveType)
+                .FirstOrDefaultAsync(e => e.EmployeeId == id);
+            if (employee == null)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            try
             {
-                try
-                {
-                    _context.Update(employee);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!EmployeeExists(employee.EmployeeId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                employee.Update(fullName, email, dateOfHire);
+                _context.Update(employee);
+                await _context.SaveChangesAsync();
             }
-            return View(employee);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!EmployeeExists(employee.EmployeeId))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Employees/Delete/5
