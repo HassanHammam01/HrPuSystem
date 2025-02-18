@@ -1,8 +1,234 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model dynamic
+
+@{
+    ViewData["Title"] = "Dashboard";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="d-flex flex-column gap-4">
+    <div>
+        <h1 class="h3 mb-1">Dashboard</h1>
+        <p class="text-secondary mb-0">Welcome to your HR Management System</p>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row g-4">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="avatar-circle bg-primary bg-opacity-10 text-primary">
+                            <i class="bi bi-people"></i>
+                        </div>
+                        <span class="badge bg-primary-subtle text-primary rounded-pill">Total</span>
+                    </div>
+                    <h3 class="h4 mb-1">@ViewBag.TotalEmployees</h3>
+                    <p class="text-secondary mb-0">Employees</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="avatar-circle bg-success bg-opacity-10 text-success">
+                            <i class="bi bi-check-circle"></i>
+                        </div>
+                        <span class="badge bg-success-subtle text-success rounded-pill">Active</span>
+                    </div>
+                    <h3 class="h4 mb-1">@ViewBag.ActiveLeaveRequests</h3>
+                    <p class="text-secondary mb-0">Active Leaves</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="avatar-circle bg-warning bg-opacity-10 text-warning">
+                            <i class="bi bi-clock"></i>
+                        </div>
+                        <span class="badge bg-warning-subtle text-warning rounded-pill">Pending</span>
+                    </div>
+                    <h3 class="h4 mb-1">@ViewBag.PendingLeaveRequests</h3>
+                    <p class="text-secondary mb-0">Pending Requests</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="avatar-circle bg-info bg-opacity-10 text-info">
+                            <i class="bi bi-calendar2-check"></i>
+                        </div>
+                        <span class="badge bg-info-subtle text-info rounded-pill">Types</span>
+                    </div>
+                    <h3 class="h4 mb-1">@ViewBag.TotalLeaveTypes</h3>
+                    <p class="text-secondary mb-0">Leave Types</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-body p-4">
+                    <h5 class="card-title mb-4">Quick Actions</h5>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a asp-controller="Employees" asp-action="Create" class="btn btn-outline-primary">
+                            <i class="bi bi-person-plus me-2"></i>New Employee
+                        </a>
+                        <a asp-controller="LeaveRecords" asp-action="Create" class="btn btn-outline-success">
+                            <i class="bi bi-calendar-plus me-2"></i>New Leave Request
+                        </a>
+                        <a asp-controller="LeaveTypes" asp-action="Create" class="btn btn-outline-info">
+                            <i class="bi bi-plus-circle me-2"></i>New Leave Type
+                        </a>
+                        <a asp-controller="LeaveRecords" asp-action="Index" class="btn btn-outline-warning">
+                            <i class="bi bi-list-check me-2"></i>Review Requests
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-body p-4">
+                    <h5 class="card-title mb-4">Leave Type Distribution</h5>
+                    <div class="d-flex flex-column gap-3">
+                        @foreach (var leaveType in ViewBag.LeaveTypeDistribution)
+                        {
+                            <div>
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="fw-medium">@leaveType.Name</span>
+                                    <span class="text-secondary">@leaveType.Count requests</span>
+                                </div>
+                                <div class="progress" style="height: 6px;">
+                                    <div class="progress-bar bg-primary" role="progressbar"
+                                        style="width: @leaveType.Percentage%;" aria-valuenow="@leaveType.Percentage"
+                                        aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Leave Requests -->
+    <div class="card">
+        <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="card-title mb-0">Recent Leave Requests</h5>
+                <a asp-controller="LeaveRecords" asp-action="Index" class="btn btn-sm btn-outline-primary">
+                    View All
+                </a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Employee</th>
+                            <th>Leave Type</th>
+                            <th>Duration</th>
+                            <th class="text-center">Status</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var record in ViewBag.RecentLeaveRequests)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-circle-sm bg-primary bg-opacity-10 text-primary me-2">
+                                            @record.Employee.FullName.Substring(0, 1).ToUpper()
+                                        </div>
+                                        <div>@record.Employee.FullName</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info-subtle text-info rounded-pill">
+                                        @record.LeaveType.Name
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-calendar-range text-secondary me-2"></i>
+                                        <span>@((record.EndDate - record.StartDate).Days + 1) days</span>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    @if (record.Approved)
+                                    {
+                                        <span class="badge bg-success-subtle text-success rounded-pill">
+                                            <i class="bi bi-check-circle me-1"></i>Approved
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning-subtle text-warning rounded-pill">
+                                            <i class="bi bi-clock me-1"></i>Pending
+                                        </span>
+                                    }
+                                </td>
+                                <td class="text-end">
+                                    <a asp-controller="LeaveRecords" asp-action="Details"
+                                        asp-route-id="@record.LeaveRecordId" class="btn btn-sm btn-outline-secondary">
+                                        View
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
+
+<style>
+    .avatar-circle {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .avatar-circle i {
+        font-size: 1.5rem;
+    }
+
+    .avatar-circle-sm {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 500;
+    }
+
+    .badge {
+        font-weight: 500;
+        padding: 0.5rem 0.75rem;
+    }
+
+    .progress {
+        background-color: #e2e8f0;
+        border-radius: 1rem;
+    }
+
+    .progress-bar {
+        border-radius: 1rem;
+    }
+
+    .btn-sm {
+        padding: 0.25rem 0.75rem;
+    }
+</style>

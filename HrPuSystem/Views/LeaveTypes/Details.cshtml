@@ -4,45 +4,138 @@
     ViewData["Title"] = "Leave Type Details";
 }
 
-<div class="container mt-4">
+<div class="d-flex flex-column gap-4">
     <div class="d-flex justify-content-between align-items-center">
-        <h2 class="text-primary fw-bold">ℹ️ Leave Type Details</h2>
-        <a asp-action="Index" class="btn btn-secondary d-flex align-items-center">
-            <i class="bi bi-arrow-left-circle me-2"></i> Back to List
+        <div>
+            <h1 class="h3 mb-1">Leave Type Details</h1>
+            <p class="text-secondary mb-0">View leave type information</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Back to List
         </a>
     </div>
 
-    <div class="card mt-3 shadow-sm">
-        <div class="card-body">
-            <dl class="row">
-                <dt class="col-sm-3 fw-semibold">🏷️ Leave Type Name</dt>
-                <dd class="col-sm-9">@Html.DisplayFor(model => model.Name)</dd>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body p-4">
+                    <div class="text-center">
+                        <div class="avatar-circle bg-primary bg-opacity-10 text-primary mx-auto mb-3">
+                            <i class="bi bi-calendar2-week"></i>
+                        </div>
+                        <h4 class="h5 mb-1">@Model.Name</h4>
+                        <div class="d-flex justify-content-center gap-2 mt-3">
+                            @if (Model.IsPaid)
+                            {
+                                <span class="badge bg-success-subtle text-success rounded-pill">
+                                    <i class="bi bi-currency-dollar me-1"></i>Paid Leave
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger-subtle text-danger rounded-pill">
+                                    <i class="bi bi-dash-circle me-1"></i>Unpaid Leave
+                                </span>
+                            }
+                            <span class="badge bg-info-subtle text-info rounded-pill">
+                                <i class="bi bi-calendar3 me-1"></i>@Model.DefaultDays days
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                <dt class="col-sm-3 fw-semibold">📆 Default Leave Days</dt>
-                <dd class="col-sm-9">@Html.DisplayFor(model => model.DefaultDays) days</dd>
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body p-4">
+                    <h5 class="card-title mb-4">Leave Type Information</h5>
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="mb-4">
+                                <label class="form-label text-secondary">Leave Type Name</label>
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-tag text-primary me-2"></i>
+                                    <span class="fw-medium">@Model.Name</span>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label text-secondary">Default Days</label>
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-calendar2-week text-primary me-2"></i>
+                                    <span class="fw-medium">@Model.DefaultDays days</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-4">
+                                <label class="form-label text-secondary">Payment Status</label>
+                                <div class="d-flex align-items-center">
+                                    @if (Model.IsPaid)
+                                    {
+                                        <i class="bi bi-currency-dollar text-success me-2"></i>
+                                        <span class="fw-medium">Paid Leave Type</span>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-dash-circle text-danger me-2"></i>
+                                        <span class="fw-medium">Unpaid Leave Type</span>
+                                    }
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label text-secondary">Identifier</label>
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-hash text-primary me-2"></i>
+                                    <span class="fw-medium">ID: @Model.LeaveTypeId</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                <dt class="col-sm-3 fw-semibold">💰 Paid Status</dt>
-                <dd class="col-sm-9">
-                    @if (Model.IsPaid)
-                    {
-                        <span class="badge bg-success">✅ Paid</span>
-                    }
-                    else
-                    {
-                        <span class="badge bg-danger">❌ Unpaid</span>
-                    }
-                </dd>
-            </dl>
+                    <hr class="my-4">
 
-            <div class="d-flex justify-content-end">
-                <a asp-action="Edit" asp-route-id="@Model?.LeaveTypeId" class="btn btn-warning d-flex align-items-center me-2">
-                    <i class="bi bi-pencil-square me-2"></i> Edit
-                </a>
-
-                <a asp-action="Index" class="btn btn-secondary d-flex align-items-center">
-                    <i class="bi bi-arrow-left-circle me-2"></i> Back to List
-                </a>
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-action="Edit" asp-route-id="@Model.LeaveTypeId" class="btn btn-primary">
+                            <i class="bi bi-pencil me-2"></i>Edit Leave Type
+                        </a>
+                        <button type="button" class="btn btn-outline-danger"
+                            onclick="confirmDelete(@Model.LeaveTypeId)">
+                            <i class="bi bi-trash me-2"></i>Delete
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .avatar-circle {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .avatar-circle i {
+        font-size: 1.75rem;
+    }
+
+    .badge {
+        font-weight: 500;
+        padding: 0.5rem 0.75rem;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        function confirmDelete(id) {
+            if (confirm('Are you sure you want to delete this leave type?')) {
+                window.location.href = '@Url.Action("Delete")/' + id;
+            }
+        }
+    </script>
+}

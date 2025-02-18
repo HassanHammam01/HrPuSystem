@@ -4,53 +4,114 @@
     ViewData["Title"] = "Create Employee";
 }
 
-<div class="container mt-4">
+<div class="d-flex flex-column gap-4">
     <div class="d-flex justify-content-between align-items-center">
-        <h2 class="text-primary fw-bold">👨‍💼 Create Employee</h2>
-        <a asp-action="Index" class="btn btn-secondary d-flex align-items-center">
-            <i class="bi bi-arrow-left-circle me-2"></i> Back to List
+        <div>
+            <h1 class="h3 mb-1">Create Employee</h1>
+            <p class="text-secondary mb-0">Add a new employee to your organization</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Back to List
         </a>
     </div>
 
-    <div class="card mt-3 shadow-sm">
-        <div class="card-body">
-            <form asp-action="Create">
-                <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none"></div>
+    <div class="card">
+        <div class="card-body p-4">
+            <form asp-action="Create" class="needs-validation" novalidate>
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4" style="display: none;"></div>
 
-                <div class="mb-3">
-                    <label asp-for="FullName" class="form-label fw-semibold">🆔 Full Name</label>
-                    <input asp-for="FullName" class="form-control" placeholder="Enter full name..." />
-                    <span asp-validation-for="FullName" class="text-danger small"></span>
+                <div class="row g-4">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label asp-for="FullName" class="form-label">Full Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="bi bi-person text-secondary"></i>
+                                </span>
+                                <input asp-for="FullName" class="form-control border-start-0 ps-0"
+                                    placeholder="Enter employee's full name" />
+                            </div>
+                            <span asp-validation-for="FullName" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Email" class="form-label">Email Address</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="bi bi-envelope text-secondary"></i>
+                                </span>
+                                <input asp-for="Email" class="form-control border-start-0 ps-0" type="email"
+                                    placeholder="Enter work email address" />
+                            </div>
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="DateOfHire" class="form-label">Date of Hire</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="bi bi-calendar text-secondary"></i>
+                                </span>
+                                <input asp-for="DateOfHire" class="form-control border-start-0 ps-0" type="date" />
+                            </div>
+                            <span asp-validation-for="DateOfHire" class="text-danger small"></span>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="mb-3">
-                    <label asp-for="Email" class="form-label fw-semibold">📧 Email</label>
-                    <input asp-for="Email" class="form-control" type="email" placeholder="Enter email..." />
-                    <span asp-validation-for="Email" class="text-danger small"></span>
-                </div>
+                <hr class="my-4">
 
-                <div class="mb-3">
-                    <label asp-for="DateOfHire" class="form-label fw-semibold">📅 Date of Hire</label>
-                    <input asp-for="DateOfHire" class="form-control" type="date" />
-                    <span asp-validation-for="DateOfHire" class="text-danger small"></span>
-                </div>
-
-                <div class="d-flex justify-content-end">
-                    <button type="submit" class="btn btn-success d-flex align-items-center me-2">
-                        <i class="bi bi-check-circle me-2"></i> Create Employee
-                    </button>
-
-                    <a asp-action="Index" class="btn btn-secondary d-flex align-items-center">
-                        <i class="bi bi-x-circle me-2"></i> Cancel
+                <div class="d-flex justify-content-end gap-2">
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        Cancel
                     </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check2 me-2"></i>Create Employee
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
+<style>
+    .input-group-text {
+        padding-right: 0.5rem;
+    }
+
+    .input-group-text i {
+        font-size: 1.1rem;
+    }
+
+    .form-control:focus {
+        box-shadow: none;
+    }
+
+    .input-group:focus-within {
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        border-radius: 0.375rem;
+    }
+
+    .input-group:focus-within .input-group-text,
+    .input-group:focus-within .form-control {
+        border-color: #86b7fe;
+    }
+</style>
+
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script>
+        // Show validation summary if there are errors
+        $(document).ready(function () {
+            if ($('.validation-summary-errors').length > 0) {
+                $('.alert.alert-danger').show();
+            }
+        });
+    </script>
 }

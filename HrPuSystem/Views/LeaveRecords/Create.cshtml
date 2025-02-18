@@ -4,68 +4,156 @@
     ViewData["Title"] = "Create Leave Record";
 }
 
-<div class="container mt-4">
+<div class="d-flex flex-column gap-4">
     <div class="d-flex justify-content-between align-items-center">
-        <h2 class="text-primary fw-bold">📝 Create Leave Record</h2>
-        <a asp-action="Index" class="btn btn-secondary d-flex align-items-center">
-            <i class="bi bi-arrow-left-circle me-2"></i> Back to List
+        <div>
+            <h1 class="h3 mb-1">Create Leave Record</h1>
+            <p class="text-secondary mb-0">Add a new leave request for an employee</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Back to List
         </a>
     </div>
 
-    <div class="card mt-3 shadow-sm">
-        <div class="card-body">
-            <form asp-action="Create">
-                <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none"></div>
+    <div class="card">
+        <div class="card-body p-4">
+            <form asp-action="Create" class="needs-validation" novalidate>
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4" style="display: none;"></div>
 
-                <div class="mb-3">
-                    <label asp-for="EmployeeId" class="form-label fw-semibold">👨‍💼 Select Employee</label>
-                    <select asp-for="EmployeeId" class="form-select" asp-items="ViewBag.EmployeeId">
-                        <option value="">-- Select Employee --</option>
-                    </select>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="EmployeeId" class="form-label">Employee</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="bi bi-person text-secondary"></i>
+                                </span>
+                                <select asp-for="EmployeeId" class="form-select border-start-0 ps-0"
+                                    asp-items="ViewBag.EmployeeId">
+                                    <option value="">Select an employee...</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="EmployeeId" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="LeaveTypeId" class="form-label">Leave Type</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="bi bi-calendar2-week text-secondary"></i>
+                                </span>
+                                <select asp-for="LeaveTypeId" class="form-select border-start-0 ps-0"
+                                    asp-items="ViewBag.LeaveTypeId">
+                                    <option value="">Select leave type...</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="LeaveTypeId" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="StartDate" class="form-label">Start Date</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="bi bi-calendar3 text-secondary"></i>
+                                </span>
+                                <input asp-for="StartDate" class="form-control border-start-0 ps-0" type="date" />
+                            </div>
+                            <span asp-validation-for="StartDate" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="EndDate" class="form-label">End Date</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="bi bi-calendar3 text-secondary"></i>
+                                </span>
+                                <input asp-for="EndDate" class="form-control border-start-0 ps-0" type="date" />
+                            </div>
+                            <span asp-validation-for="EndDate" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label class="form-label d-block">Approval Status</label>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" asp-for="Approved" id="approvedSwitch">
+                                <label class="form-check-label" for="approvedSwitch">
+                                    <i class="bi bi-check-circle text-success me-1"></i>Mark as Approved
+                                </label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="mb-3">
-                    <label asp-for="LeaveTypeId" class="form-label fw-semibold">📋 Select Leave Type</label>
-                    <select asp-for="LeaveTypeId" class="form-select" asp-items="ViewBag.LeaveTypeId">
-                        <option value="">-- Select Leave Type --</option>
-                    </select>
-                </div>
+                <hr class="my-4">
 
-                <div class="mb-3">
-                    <label asp-for="StartDate" class="form-label fw-semibold">📅 Start Date</label>
-                    <input asp-for="StartDate" class="form-control" type="date" />
-                    <span asp-validation-for="StartDate" class="text-danger small"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="EndDate" class="form-label fw-semibold">📅 End Date</label>
-                    <input asp-for="EndDate" class="form-control" type="date" />
-                    <span asp-validation-for="EndDate" class="text-danger small"></span>
-                </div>
-
-                <div class="form-check mb-3">
-                    <input class="form-check-input" type="checkbox" asp-for="Approved" id="approvedCheckbox">
-                    <label class="form-check-label fw-semibold" for="approvedCheckbox">
-                        ✅ Approved
-                    </label>
-                </div>
-
-                <div class="d-flex justify-content-end">
-                    <button type="submit" class="btn btn-success d-flex align-items-center me-2">
-                        <i class="bi bi-check-circle me-2"></i> Create Leave Record
-                    </button>
-
-                    <a asp-action="Index" class="btn btn-secondary d-flex align-items-center">
-                        <i class="bi bi-x-circle me-2"></i> Cancel
+                <div class="d-flex justify-content-end gap-2">
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        Cancel
                     </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check2 me-2"></i>Create Record
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
+<style>
+    .input-group-text {
+        padding-right: 0.5rem;
+    }
+
+    .input-group-text i {
+        font-size: 1.1rem;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        box-shadow: none;
+    }
+
+    .input-group:focus-within {
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        border-radius: 0.375rem;
+    }
+
+    .input-group:focus-within .input-group-text,
+    .input-group:focus-within .form-control,
+    .input-group:focus-within .form-select {
+        border-color: #86b7fe;
+    }
+
+    .form-switch .form-check-input {
+        width: 3em;
+        height: 1.5em;
+        margin-top: 0.25em;
+    }
+
+    .form-switch .form-check-input:checked {
+        background-color: var(--bs-success);
+        border-color: var(--bs-success);
+    }
+</style>
+
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script>
+        // Show validation summary if there are errors
+        $(document).ready(function () {
+            if ($('.validation-summary-errors').length > 0) {
+                $('.alert.alert-danger').show();
+            }
+        });
+    </script>
 }
