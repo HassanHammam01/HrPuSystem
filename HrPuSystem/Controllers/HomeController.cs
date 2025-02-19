@@ -22,7 +22,7 @@ namespace HrPuSystem.Controllers
         [HttpGet("/")]
         [HttpGet("/Home")]
         [HttpGet("/Home/Index")]
-        public async Task<IActionResult> Index(int? year = null)
+        public async Task<IActionResult> Index(int? year = null, int? month = null)
         {
             await UpdateAnnualLeavesAsync();
 
@@ -86,9 +86,10 @@ namespace HrPuSystem.Controllers
 
             ViewBag.AvailableYears = availableYears;
             ViewBag.SelectedYear = selectedYear;
+            ViewBag.SelectedMonth = month;
 
-            // Get employee summary
-            var employees = await _context.Employees
+            // Get employee summary with month filter
+            var employeeQuery = _context.Employees
                 .Include(e => e.LeaveRecords)
                 .Select(e => new
                 {
@@ -97,13 +98,19 @@ namespace HrPuSystem.Controllers
                     e.Email,
                     e.DateOfHire,
                     e.AnnualLeaveBalance,
-                    ActiveLeaves = e.LeaveRecords.Count(lr => lr.Approved && lr.StartDate <= today && lr.EndDate >= today),
-                    TotalLeaves = e.LeaveRecords.Count()
-                })
+                    ActiveLeaves = e.LeaveRecords.Count(lr =>
+                        lr.Approved &&
+                        lr.StartDate <= today &&
+                        lr.EndDate >= today &&
+                        (!month.HasValue || (lr.StartDate.Month == month.Value || lr.EndDate.Month == month.Value))),
+                    TotalLeaves = e.LeaveRecords.Count(lr =>
+                        !month.HasValue ||
+                        (lr.StartDate.Month == month.Value || lr.EndDate.Month == month.Value))
+                });
+
+            ViewBag.EmployeeSummary = await employeeQuery
                 .OrderBy(e => e.FullName)
                 .ToListAsync();
-
-            ViewBag.EmployeeSummary = employees;
 
             return View();
         }

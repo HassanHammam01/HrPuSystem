@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HrPuSystem.Data;
 using HrPuSystem.Models;
+using HrPuSystem.Models.Filters;
 
 namespace HrPuSystem.Controllers
 {
@@ -22,9 +23,32 @@ namespace HrPuSystem.Controllers
         }
 
         // GET: LeaveTypes
-        public async Task<IActionResult> Index()
+        [HttpGet("/leaveTypes")]
+        public async Task<IActionResult> Index(LeaveTypeFilter filter)
         {
-            return View(await _context.LeaveTypes.ToListAsync());
+            var query = _context.LeaveTypes.AsQueryable();
+
+            // Apply filters
+            if (!string.IsNullOrWhiteSpace(filter.Name))
+            {
+                query = query.Where(lt => lt.Name.Contains(filter.Name));
+            }
+
+            if (filter.IsPaid.HasValue)
+            {
+                query = query.Where(lt => lt.IsPaid == filter.IsPaid.Value);
+            }
+
+            // Order by name
+            query = query.OrderBy(lt => lt.Name);
+
+            var result = await PaginatedList<LeaveType>.CreateAsync(
+                query,
+                filter.PageNumber,
+                filter.PageSize);
+
+            ViewBag.Filter = filter;
+            return View(result);
         }
 
         // GET: LeaveTypes/Details/5

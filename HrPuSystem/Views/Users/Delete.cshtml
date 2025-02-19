@@ -1,0 +1,80 @@
+@model HrPuSystem.Models.ViewModels.UserViewModel
+
+@{
+    ViewData["Title"] = "Delete User";
+}
+
+<div class="d-flex flex-column gap-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="h3 mb-1">Delete User</h1>
+            <p class="text-secondary mb-0">Are you sure you want to delete this user?</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Back to List
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="mb-4">
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="avatar-circle bg-primary bg-opacity-10 text-primary me-3">
+                                @Model.Email.Substring(0, 1).ToUpper()
+                            </div>
+                            <div>
+                                <h5 class="mb-1">@Model.Email</h5>
+                                <p class="text-secondary mb-0">@Model.UserName</p>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <h6 class="mb-2">Roles</h6>
+                            @if (Model.Roles.Any())
+                            {
+                                    foreach (var role in Model.Roles)
+                                    {
+                                            <span class="badge bg-primary-subtle text-primary rounded-pill me-2">@role</span>
+                                    }
+                            }
+                            else
+                            {
+                                    <p class="text-muted mb-0">No roles assigned</p>
+                            }
+                        </div>
+
+                        <div class="alert alert-danger" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            <strong>Warning:</strong> This action cannot be undone. All data associated with this user will be permanently deleted.
+                        </div>
+
+                        <form asp-action="Delete" method="post">
+                            <input type="hidden" asp-for="Id" />
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="bi bi-trash me-2"></i>Delete User
+                                </button>
+                                <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .avatar-circle {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 500;
+        font-size: 1.25rem;
+    }
+</style> 

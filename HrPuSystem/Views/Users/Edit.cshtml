@@ -1,0 +1,90 @@
+@model HrPuSystem.Models.ViewModels.UserEditViewModel
+
+@{
+    ViewData["Title"] = "Edit User";
+}
+
+<div class="d-flex flex-column gap-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="h3 mb-1">Edit User</h1>
+            <p class="text-secondary mb-0">Manage user details and roles</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Back to List
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <form asp-action="Edit" method="post">
+                        <input type="hidden" asp-for="Id" />
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label">Email</label>
+                            <input asp-for="Email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="UserName" class="form-label">Username</label>
+                            <input asp-for="UserName" class="form-control" />
+                            <span asp-validation-for="UserName" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Roles</label>
+                            <div class="row g-3">
+                                @foreach (var role in Model.AllRoles)
+                                {
+                                        <div class="col-md-4">
+                                            <div class="form-check">
+                                                <input type="checkbox" name="SelectedRoles" value="@role" class="form-check-input"
+                                                    @(Model.CurrentRoles.Contains(role) ? "checked" : "") />
+                                                <label class="form-check-label">@role</label>
+                                            </div>
+                                        </div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-lg me-2"></i>Save Changes
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Current Roles</h5>
+                    @if (Model.CurrentRoles.Any())
+                    {
+                            foreach (var role in Model.CurrentRoles)
+                            {
+                                    <span class="badge bg-primary-subtle text-primary rounded-pill me-2 mb-2">@role</span>
+                            }
+                    }
+                    else
+                    {
+                            <p class="text-muted mb-0">No roles assigned</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

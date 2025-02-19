@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HrPuSystem.Data;
 using HrPuSystem.Models;
+using HrPuSystem.Models.Filters;
 
 namespace HrPuSystem.Controllers
 {
@@ -22,9 +23,36 @@ namespace HrPuSystem.Controllers
         }
 
         // GET: Employees
-        public async Task<IActionResult> Index()
+        [HttpGet("/employees")]
+        public async Task<IActionResult> Index(EmployeeFilter filter)
         {
-            return View(await _context.Employees.ToListAsync());
+            var query = _context.Employees
+                .Include(e => e.LeaveRecords)
+                .AsQueryable();
+
+            // Apply filters
+            if (!string.IsNullOrWhiteSpace(filter.FullName))
+                query = query.Where(e => e.FullName.Contains(filter.FullName));
+
+            if (!string.IsNullOrWhiteSpace(filter.Email))
+                query = query.Where(e => e.Email.Contains(filter.Email));
+
+            if (filter.DateOfHireFrom.HasValue)
+                query = query.Where(e => e.DateOfHire >= filter.DateOfHireFrom.Value);
+
+            if (filter.DateOfHireTo.HasValue)
+                query = query.Where(e => e.DateOfHire <= filter.DateOfHireTo.Value);
+
+            // Order by name
+            query = query.OrderBy(e => e.FullName);
+
+            var result = await PaginatedList<Employee>.CreateAsync(
+                query,
+                filter.PageNumber,
+                filter.PageSize);
+
+            ViewBag.Filter = filter;
+            return View(result);
         }
 
         // GET: Employees/Details/5
@@ -83,8 +111,6 @@ namespace HrPuSystem.Controllers
         }
 
         // POST: Employees/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
@@ -116,8 +142,6 @@ namespace HrPuSystem.Controllers
         }
 
         // POST: Employees/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]

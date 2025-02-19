@@ -1,47 +1,84 @@
-﻿@model IEnumerable<HrPuSystem.Models.Employee>
+﻿@model PaginatedList<HrPuSystem.Models.Employee>
 @using Microsoft.AspNetCore.Identity
 @inject UserManager<IdentityUser> UserManager
 
 @{
     ViewData["Title"] = "Employees";
     var isAdmin = User.IsInRole("Admin");
+    var filter = ViewBag.Filter as HrPuSystem.Models.Filters.EmployeeFilter ?? new
+    HrPuSystem.Models.Filters.EmployeeFilter();
 }
 
 <div class="d-flex flex-column gap-4">
     <div class="d-flex justify-content-between align-items-center">
         <div>
             <h1 class="h3 mb-1">Employees</h1>
-            <p class="text-secondary mb-0">Manage your organization's workforce</p>
+            <p class="text-secondary mb-0">Manage employee information and leave records</p>
         </div>
         @if (isAdmin)
         {
             <a asp-action="Create" class="btn btn-primary">
-                <i class="bi bi-plus-lg me-2"></i>Add Employee
+                <i class="bi bi-person-plus me-2"></i>New Employee
             </a>
         }
     </div>
 
+    <!-- Filters -->
+    <div class="card">
+        <div class="card-body py-2">
+            <form method="get" class="d-flex gap-3 align-items-end">
+                <div style="min-width: 200px;">
+                    <label class="form-label small mb-1">Full Name</label>
+                    <input type="text" name="FullName" class="form-control form-control-sm" value="@filter.FullName" />
+                </div>
+                <div style="min-width: 200px;">
+                    <label class="form-label small mb-1">Email</label>
+                    <input name="Email" class="form-control form-control-sm" value="@filter.Email" />
+                </div>
+                <div>
+                    <label class="form-label small mb-1">Hired From</label>
+                    <input type="date" name="DateOfHireFrom" class="form-control form-control-sm"
+                        value="@(filter.DateOfHireFrom?.ToString("yyyy-MM-dd"))" />
+                </div>
+                <div>
+                    <label class="form-label small mb-1">Hired To</label>
+                    <input type="date" name="DateOfHireTo" class="form-control form-control-sm"
+                        value="@(filter.DateOfHireTo?.ToString("yyyy-MM-dd"))" />
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        <i class="bi bi-filter me-1"></i>Filter
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-x-circle me-1"></i>Clear
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div class="card">
         <div class="table-responsive">
-            <table class="table table-hover align-middle">
+            <table class="table table-hover align-middle mb-0">
                 <thead>
                     <tr>
                         <th class="ps-4">Employee</th>
-                        <th>Email</th>
+                        <th>Contact</th>
                         <th>Date Hired</th>
                         <th class="text-center">Annual Leave Balance</th>
+                        <th class="text-center">Active Leaves</th>
                         <th class="text-end pe-4">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model)
+                    @foreach (var item in Model.Items)
                     {
                         <tr>
                             <td class="ps-4">
                                 <div class="d-flex align-items-center">
-                                    @* <div class="avatar-circle bg-primary bg-opacity-10 text-primary me-3">
+                                    <div class="avatar-circle bg-primary bg-opacity-10 text-primary me-3">
                                         @item.FullName.Substring(0, 1).ToUpper()
-                                    </div> *@
+                                    </div>
                                     <div>
                                         <div class="fw-medium">@item.FullName</div>
                                         <div class="small text-secondary">ID: @item.EmployeeId</div>
@@ -61,30 +98,33 @@
                                 </div>
                             </td>
                             <td class="text-center">
-                                <span class="badge bg-success-subtle text-success rounded-pill px-3">
+                                <span class="badge bg-success-subtle text-success rounded-pill">
                                     @item.AnnualLeaveBalance days
                                 </span>
                             </td>
-                            <td class="text-end pe-4">
-                                <div class="btn-group">
-                                    @if (isAdmin)
+                            <td class="text-center">
+                                <span class="badge bg-primary-subtle text-primary rounded-pill">
+                                    @item.LeaveRecords.Count(lr => lr.Approved && lr.StartDate <= DateTime.Today &&
+                                    lr.EndDate >= DateTime.Today)
+                            </span>
+                        </td>
+                        <td class="text-end pe-4">
+                            <div class="btn-group">
+                                @if (isAdmin)
                                     {
                                         <a asp-action="Edit" asp-route-id="@item.EmployeeId"
                                             class="btn btn-sm btn-outline-primary" title="Edit">
                                             <i class="bi bi-pencil"></i>
                                         </a>
-                                    }
-                                    <a asp-action="Details" asp-route-id="@item.EmployeeId"
-                                        class="btn btn-sm btn-outline-secondary" title="View Details">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
-                                    @if (isAdmin)
-                                    {
                                         <button type="button" class="btn btn-sm btn-outline-danger" title="Delete"
                                             onclick="confirmDelete(@item.EmployeeId)">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     }
+                                    <a asp-action="Details" asp-route-id="@item.EmployeeId"
+                                        class="btn btn-sm btn-outline-secondary" title="View Details">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
                                 </div>
                             </td>
                         </tr>
@@ -92,6 +132,41 @@
                 </tbody>
             </table>
         </div>
+
+        @if (Model.TotalPages > 1)
+        {
+            <div class="card-footer d-flex justify-content-between align-items-center">
+                <div class="text-muted small">
+                    Showing @((Model.PageIndex - 1) * filter.PageSize + 1) to @(Math.Min(Model.PageIndex * filter.PageSize,
+                    Model.TotalItems)) of @Model.TotalItems items
+            </div>
+            <nav aria-label="Page navigation">
+                <ul class="pagination pagination-sm mb-0">
+                    <li class="page-item @(!Model.HasPreviousPage ? "disabled" : "")">
+                        <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.PageIndex - 1)"
+                            asp-route-fullName="@filter.FullName" asp-route-email="@filter.Email"
+                            asp-route-dateOfHireFrom="@filter.DateOfHireFrom?.ToString("yyyy-MM-dd")"
+                            asp-route-dateOfHireTo="@filter.DateOfHireTo?.ToString("yyyy-MM-dd")">Previous</a>
+                    </li>
+                    @for (var i = 1; i <= Model.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                                <a class="page-link" asp-action="Index" asp-route-pageNumber="@i"
+                                    asp-route-fullName="@filter.FullName" asp-route-email="@filter.Email"
+                                    asp-route-dateOfHireFrom="@filter.DateOfHireFrom?.ToString("yyyy-MM-dd")"
+                                    asp-route-dateOfHireTo="@filter.DateOfHireTo?.ToString("yyyy-MM-dd")">@i</a>
+                            </li>
+                        }
+                        <li class="page-item @(!Model.HasNextPage ? "disabled" : "")">
+                            <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.PageIndex + 1)"
+                                asp-route-fullName="@filter.FullName" asp-route-email="@filter.Email"
+                                asp-route-dateOfHireFrom="@filter.DateOfHireFrom?.ToString("yyyy-MM-dd")"
+                                asp-route-dateOfHireTo="@filter.DateOfHireTo?.ToString("yyyy-MM-dd")">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        }
     </div>
 </div>
 

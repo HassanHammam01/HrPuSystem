@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using HrPuSystem.Models.Filters;
 
 namespace HrPuSystem.Controllers
 {
@@ -21,40 +22,49 @@ namespace HrPuSystem.Controllers
         }
 
         // GET: LeaveRecords
-        public async Task<IActionResult> Index(int? year, string? status)
+        [HttpGet("/leaveRecords")]
+        public async Task<IActionResult> Index(LeaveRecordFilter filter)
         {
-            // Set current year as default only if year parameter is not provided in the URL
-            if (!Request.Query.ContainsKey("year"))
-            {
-                year = DateTime.Now.Year;
-            }
-
             var query = _context.LeaveRecords
                 .Include(l => l.Employee)
                 .Include(l => l.LeaveType)
-                .Where(lr =>
-                    (!year.HasValue || lr.StartDate.Year == year.Value) &&
-                    (string.IsNullOrEmpty(status) ||
-                    (status == "approved" && lr.Approved) ||
-                    (status == "pending" && !lr.Approved)));
+                .AsQueryable();
 
-            ViewBag.SelectedYear = year;
-            ViewBag.SelectedStatus = status;
-            ViewBag.AvailableYears = await _context.LeaveRecords
-                .Select(lr => lr.StartDate.Year)
-                .Distinct()
-                .OrderByDescending(y => y)
-                .ToListAsync();
+            // Apply filters
+            if (!string.IsNullOrWhiteSpace(filter.EmployeeName))
+                query = query.Where(lr => lr.Employee.FullName.Contains(filter.EmployeeName));
 
-            // Add current year if not in the list
-            if (!ViewBag.AvailableYears.Contains(DateTime.Now.Year))
+            if (filter.LeaveTypeId.HasValue)
+                query = query.Where(lr => lr.LeaveTypeId == filter.LeaveTypeId);
+
+            if (filter.StartDate.HasValue)
+                query = query.Where(lr => lr.StartDate >= filter.StartDate.Value);
+
+            if (filter.EndDate.HasValue)
+                query = query.Where(lr => lr.EndDate <= filter.EndDate.Value);
+
+            if (!string.IsNullOrEmpty(filter.Status))
             {
-                var availableYears = ViewBag.AvailableYears as List<int> ?? new List<int>();
-                availableYears.Insert(0, DateTime.Now.Year);
-                ViewBag.AvailableYears = availableYears;
+                query = query.Where(lr =>
+                    (filter.Status == "approved" && lr.Approved) ||
+                    (filter.Status == "pending" && !lr.Approved));
             }
 
-            return View(await query.OrderByDescending(lr => lr.StartDate).ToListAsync());
+            // Order by most recent first
+            query = query.OrderByDescending(lr => lr.StartDate);
+
+            // Setup ViewBag data for filters
+            ViewBag.LeaveTypes = await _context.LeaveTypes
+                .OrderBy(lt => lt.Name)
+                .ToListAsync();
+
+            var result = await PaginatedList<LeaveRecord>.CreateAsync(
+                query,
+                filter.PageNumber,
+                filter.PageSize);
+
+            ViewBag.Filter = filter;
+            return View(result);
         }
 
         // GET: LeaveRecords/Details/5

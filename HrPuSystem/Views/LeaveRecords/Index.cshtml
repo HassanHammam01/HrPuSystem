@@ -1,10 +1,12 @@
-﻿@model IEnumerable<HrPuSystem.Models.LeaveRecord>
+﻿@model PaginatedList<HrPuSystem.Models.LeaveRecord>
 @using Microsoft.AspNetCore.Identity
 @inject UserManager<IdentityUser> UserManager
 
 @{
     ViewData["Title"] = "Leave Records";
     var isAdmin = User.IsInRole("Admin");
+    var filter = ViewBag.Filter as HrPuSystem.Models.Filters.LeaveRecordFilter ?? new
+    HrPuSystem.Models.Filters.LeaveRecordFilter();
 }
 
 <div class="d-flex flex-column gap-4">
@@ -13,26 +15,59 @@
             <h1 class="h3 mb-1">Leave Records</h1>
             <p class="text-secondary mb-0">Manage employee leave requests</p>
         </div>
-        <div class="d-flex align-items-center gap-3">
-            <form method="get" class="d-flex align-items-center gap-2">
-                <select name="year" class="form-select form-select-sm" onchange="this.form.submit()"
-                    style="width: 120px;">
-                    <option value="">All Years</option>
-                    @foreach (var year in ViewBag.AvailableYears)
-                    {
-                        <option value="@year" selected="@(ViewBag.SelectedYear == year)">@year</option>
-                    }
-                </select>
-                <select name="status" class="form-select form-select-sm" onchange="this.form.submit()"
-                    style="width: 140px;">
-                    <option value="">All Status</option>
-                    <option value="approved" selected="@(ViewBag.SelectedStatus == "approved")">Approved</option>
-                    <option value="pending" selected="@(ViewBag.SelectedStatus == "pending")">Pending</option>
-                </select>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-plus-lg me-2"></i>New Leave Request
+        </a>
+    </div>
+
+    <!-- Filters -->
+    <div class="card">
+        <div class="card-body py-2">
+            <form method="get" class="d-flex gap-3 align-items-end">
+                <div style="min-width: 200px;">
+                    <label class="form-label small mb-1">Employee Name</label>
+                    <input type="text" name="EmployeeName" class="form-control form-control-sm"
+                        value="@filter.EmployeeName" />
+                </div>
+                <div style="min-width: 150px;">
+                    <label class="form-label small mb-1">Leave Type</label>
+                    <select name="LeaveTypeId" class="form-select form-select-sm">
+                        <option value="">All Types</option>
+                        @foreach (var type in ViewBag.LeaveTypes)
+                        {
+                            <option value="@type.LeaveTypeId" selected="@(filter.LeaveTypeId == type.LeaveTypeId)">
+                                @type.Name
+                            </option>
+                        }
+                    </select>
+                </div>
+                <div>
+                    <label class="form-label small mb-1">Start Date</label>
+                    <input type="date" name="StartDate" class="form-control form-control-sm"
+                        value="@(filter.StartDate?.ToString("yyyy-MM-dd"))" />
+                </div>
+                <div>
+                    <label class="form-label small mb-1">End Date</label>
+                    <input type="date" name="EndDate" class="form-control form-control-sm"
+                        value="@(filter.EndDate?.ToString("yyyy-MM-dd"))" />
+                </div>
+                <div style="min-width: 120px;">
+                    <label class="form-label small mb-1">Status</label>
+                    <select name="Status" class="form-select form-select-sm">
+                        <option value="">All Status</option>
+                        <option value="approved" selected="@(filter.Status == "approved")">Approved</option>
+                        <option value="pending" selected="@(filter.Status == "pending")">Pending</option>
+                    </select>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        <i class="bi bi-filter me-1"></i>Filter
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-x-circle me-1"></i>Clear
+                    </a>
+                </div>
             </form>
-            <a asp-action="Create" class="btn btn-primary">
-                <i class="bi bi-plus-lg me-2"></i>New Leave Request
-            </a>
         </div>
     </div>
 
@@ -49,7 +84,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model)
+                    @foreach (var item in Model.Items)
                     {
                         <tr>
                             <td class="ps-4">
@@ -121,6 +156,50 @@
                 </tbody>
             </table>
         </div>
+
+        @if (Model.TotalPages > 1)
+        {
+            <div class="card-footer d-flex justify-content-between align-items-center">
+                <div class="text-muted small">
+                    Showing @((Model.PageIndex - 1) * filter.PageSize + 1) to
+                    @(Math.Min(Model.PageIndex * filter.PageSize, Model.TotalItems)) of @Model.TotalItems items
+                </div>
+                <nav aria-label="Page navigation">
+                    <ul class="pagination pagination-sm mb-0">
+                        <li class="page-item @(!Model.HasPreviousPage ? "disabled" : "")">
+                            <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.PageIndex - 1)"
+                                asp-route-employeeName="@filter.EmployeeName" asp-route-leaveTypeId="@filter.LeaveTypeId"
+                                asp-route-startDate="@filter.StartDate?.ToString("yyyy-MM-dd")"
+                                asp-route-endDate="@filter.EndDate?.ToString("yyyy-MM-dd")"
+                                asp-route-status="@filter.Status">
+                                Previous
+                            </a>
+                        </li>
+                        @for (var i = 1; i <= Model.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                                <a class="page-link" asp-action="Index" asp-route-pageNumber="@i"
+                                    asp-route-employeeName="@filter.EmployeeName" asp-route-leaveTypeId="@filter.LeaveTypeId"
+                                    asp-route-startDate="@filter.StartDate?.ToString("yyyy-MM-dd")"
+                                    asp-route-endDate="@filter.EndDate?.ToString("yyyy-MM-dd")"
+                                    asp-route-status="@filter.Status">
+                                    @i
+                                </a>
+                            </li>
+                        }
+                        <li class="page-item @(!Model.HasNextPage ? "disabled" : "")">
+                            <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.PageIndex + 1)"
+                                asp-route-employeeName="@filter.EmployeeName" asp-route-leaveTypeId="@filter.LeaveTypeId"
+                                asp-route-startDate="@filter.StartDate?.ToString("yyyy-MM-dd")"
+                                asp-route-endDate="@filter.EndDate?.ToString("yyyy-MM-dd")"
+                                asp-route-status="@filter.Status">
+                                Next
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        }
     </div>
 </div>
 

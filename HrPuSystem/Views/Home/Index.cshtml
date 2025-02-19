@@ -132,8 +132,8 @@
                                 </div>
                                 <div class="progress" style="height: 6px;">
                                     <div class="progress-bar bg-primary" role="progressbar"
-                                         style="width: @leaveType.Percentage%;" aria-valuenow="@leaveType.Percentage"
-                                         aria-valuemin="0" aria-valuemax="100"></div>
+                                        style="width: @leaveType.Percentage%;" aria-valuenow="@leaveType.Percentage"
+                                        aria-valuemin="0" aria-valuemax="100"></div>
                                 </div>
                             </div>
                         }
@@ -151,18 +151,11 @@
                 <div class="d-flex gap-2">
                     <select class="form-select form-select-sm" id="monthFilter">
                         <option value="">All Time</option>
-                        <option value="1">January</option>
-                        <option value="2">February</option>
-                        <option value="3">March</option>
-                        <option value="4">April</option>
-                        <option value="5">May</option>
-                        <option value="6">June</option>
-                        <option value="7">July</option>
-                        <option value="8">August</option>
-                        <option value="9">September</option>
-                        <option value="10">October</option>
-                        <option value="11">November</option>
-                        <option value="12">December</option>
+                        @for (int i = 1; i <= 12; i++)
+                        {
+                            var monthName = new DateTime(2024, i, 1).ToString("MMMM");
+                            <option value="@i" selected="@(ViewBag.SelectedMonth == i)">@monthName</option>
+                        }
                     </select>
                     <a asp-controller="Employees" asp-action="Index" class="btn btn-outline-primary">
                         Employees
@@ -223,7 +216,7 @@
                                 </td>
                                 <td class="text-end">
                                     <a asp-controller="Employees" asp-action="Details" asp-route-id="@employee.EmployeeId"
-                                       class="btn btn-sm btn-outline-secondary">
+                                        class="btn btn-sm btn-outline-secondary">
                                         View
                                     </a>
                                 </td>
@@ -246,9 +239,9 @@
         justify-content: center;
     }
 
-        .avatar-circle i {
-            font-size: 1.5rem;
-        }
+    .avatar-circle i {
+        font-size: 1.5rem;
+    }
 
     .avatar-circle-sm {
         width: 32px;
@@ -259,9 +252,9 @@
         justify-content: center;
     }
 
-        .avatar-circle-sm i {
-            font-size: 1rem;
-        }
+    .avatar-circle-sm i {
+        font-size: 1rem;
+    }
 
     .badge {
         font-weight: 500;
@@ -292,13 +285,13 @@
         width: 100%;
     }
 
-        .chart-container canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-        }
+    .chart-container canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
 </style>
 
 @section Scripts {
@@ -341,13 +334,15 @@
         // Year filter handler
         document.getElementById('yearFilter').addEventListener('change', function (e) {
             const year = e.target.value;
-            window.location.href = `?year=${year}`;
+            const month = document.getElementById('monthFilter').value;
+            window.location.href = `?year=${year}&month=${month}`;
         });
 
         // Month filter handler
         document.getElementById('monthFilter').addEventListener('change', function (e) {
             const month = e.target.value;
-            // TODO: Add filter functionality
+            const year = document.getElementById('yearFilter').value;
+            window.location.href = `?year=${year}&month=${month}`;
         });
     </script>
 }
