@@ -78,15 +78,7 @@ namespace HrPuSystem.Models
             // Calculate initial leaves (15 days) validity period
             var initialLeavesEndDate = DateOfHire.AddMonths(18);
             var now = DateTime.Now;
-
-            int initialLeaves = 0;
-
-            // Add initial 15 days if they're not expired
-            //if (now <= initialLeavesEndDate)
-            //    initialLeaves = 15;
-
-            // Set initial balance
-            int totalAvailableLeaves = initialLeaves;
+            int totalAvailableLeaves = 0;
 
             // Go through each year of service
             for (int year = 1; year <= YearsOfService; year++)
@@ -122,8 +114,9 @@ namespace HrPuSystem.Models
             var now = DateTime.Now;
             int yearsDifference = DateTime.Now.Year - DateOfHire.Year;
 
-            if (DateTime.Now >= DateOfHire && DateTime.Now.Year == DateOfHire.Year)
-                yearsDifference = 1;
+            // Uncomment this if you want to allow employees who have not worked a full year to have annual leaves
+            //if (DateTime.Now >= DateOfHire && DateTime.Now.Year == DateOfHire.Year)
+            //    yearsDifference = 1;
 
             return yearsDifference;
         }
