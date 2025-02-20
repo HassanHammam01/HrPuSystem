@@ -1,4 +1,5 @@
 using HrPuSystem.Data;
+using HrPuSystem.Middleware;
 using HrPuSystem.Services;
 
 using Microsoft.AspNetCore.Identity;
@@ -40,6 +41,7 @@ namespace HrPuSystem
 
             var app = builder.Build();
 
+            app.UseGlobalExceptionHandling();
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {

@@ -137,9 +137,15 @@ namespace HrPuSystem.Controllers
 
         [AllowAnonymous]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public IActionResult Error(string returnUrl, string message = null, bool? isApplicationException = null)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View(new ErrorViewModel
+            {
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
+                ExceptionMessage = message,
+                IsApplicationException = isApplicationException ?? false,
+                IsDevelopment = HttpContext.RequestServices.GetService<IWebHostEnvironment>()?.IsDevelopment() ?? false
+            });
         }
     }
 }

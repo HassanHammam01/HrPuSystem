@@ -1,5 +1,6 @@
 ﻿using HrPuSystem.Data;
 using HrPuSystem.Models;
+using HrPuSystem.Exceptions;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -16,21 +17,19 @@ namespace HrPuSystem.Services
 
         public async Task RequestLeaveAsync(int employeeId, int leaveTypeId, DateTime startDate, DateTime endDate, bool approved = false)
         {
-            try
-            {
                 // Calculate total leave days requested
                 int totalDays = (endDate - startDate).Days + 1;
 
                 // Fetch the employee and leave type
                 var employee = await _context.Employees.Include(e => e.LeaveRecords).ThenInclude(lr => lr.LeaveType)
                     .FirstOrDefaultAsync(e => e.EmployeeId == employeeId)
-                    ?? throw new ArgumentNullException("Employee");
+                    ?? throw new MyApplicationException("Employee could not be found");
                 var leaveType = await _context.LeaveTypes.FirstOrDefaultAsync(lt => lt.LeaveTypeId == leaveTypeId)
-                    ?? throw new ArgumentNullException("Leave Type");
+                    ?? throw new MyApplicationException("Leave Type could not be found");
 
                 // Check if leave type is Annual and if the balance is sufficient
                 if (leaveType.Name == "Annual" && employee.AnnualLeaveBalance < totalDays)
-                    throw new InvalidOperationException("Insufficient annual leave balance.");
+                    throw new MyApplicationException("Insufficient annual leave balance.");
 
                 var leaveRecord = new LeaveRecord
                 {
@@ -51,11 +50,7 @@ namespace HrPuSystem.Services
                     _context.Update(employee);
                     await _context.SaveChangesAsync();
                 }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Failed to create leave record", ex);
-            }
+            
         }
     }
 }
