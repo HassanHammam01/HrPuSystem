@@ -111,7 +111,12 @@ namespace HrPuSystem.Models
 
         private int CalculateYearsOfService()
         {
-            int yearsDifference = DateTime.Now.Year - DateOfHire.Year;
+            var now = DateTime.Now;
+            int yearsDifference = now.Year - DateOfHire.Year;
+
+            // Check if full year has passed, if not, subtract 1
+            if (now < DateOfHire.AddYears(yearsDifference))
+                yearsDifference--;
 
             // Uncomment this if you want to allow employees who have not worked a full year to have annual leaves
             //if (DateTime.Now >= DateOfHire && DateTime.Now.Year == DateOfHire.Year)
