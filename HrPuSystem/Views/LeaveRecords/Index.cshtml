@@ -74,10 +74,10 @@
     <div class="card">
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
-                <thead>
+                <thead class="bg-light">
                     <tr>
                         <th class="ps-4">
-                            <a href="@Url.Action("Index", new { filter.EmployeeName, filter.LeaveTypeId, filter.StartDate, filter.EndDate, filter.Status, SortBy = "EmployeeName", SortDescending = filter.SortBy == "EmployeeName" ? !filter.SortDescending : true })" class="text-dark text-decoration-none">
+                            <a href="@Url.Action("Index", new { filter.EmployeeName, filter.LeaveTypeId, filter.StartDate, filter.EndDate, filter.Status, SortBy = "EmployeeName", SortDescending = filter.SortBy == "EmployeeName" ? !filter.SortDescending : true })" class="text text-decoration-none">
                                 Employee
                                 @if (filter.SortBy?.ToLower() == "employeename")
                                 {
@@ -85,8 +85,8 @@
                                 }
                             </a>
                         </th>
-                        <th>
-                            <a href="@Url.Action("Index", new { filter.EmployeeName, filter.LeaveTypeId, filter.StartDate, filter.EndDate, filter.Status, SortBy = "LeaveType", SortDescending = filter.SortBy == "LeaveType" ? !filter.SortDescending : true })" class="text-dark text-decoration-none">
+                        <th class="text">
+                            <a href="@Url.Action("Index", new { filter.EmployeeName, filter.LeaveTypeId, filter.StartDate, filter.EndDate, filter.Status, SortBy = "LeaveType", SortDescending = filter.SortBy == "LeaveType" ? !filter.SortDescending : true })" class="text text-decoration-none">
                                 Leave Type
                                 @if (filter.SortBy?.ToLower() == "leavetype")
                                 {
@@ -94,8 +94,8 @@
                                 }
                             </a>
                         </th>
-                        <th>
-                            <a href="@Url.Action("Index", new { filter.EmployeeName, filter.LeaveTypeId, filter.StartDate, filter.EndDate, filter.Status, SortBy = "Duration", SortDescending = filter.SortBy == "Duration" ? !filter.SortDescending : true })" class="text-dark text-decoration-none">
+                        <th class="text">
+                            <a href="@Url.Action("Index", new { filter.EmployeeName, filter.LeaveTypeId, filter.StartDate, filter.EndDate, filter.Status, SortBy = "Duration", SortDescending = filter.SortBy == "Duration" ? !filter.SortDescending : true })" class="text-decoration-none">
                                 Duration
                                 @if (filter.SortBy?.ToLower() == "duration")
                                 {
@@ -104,7 +104,7 @@
                             </a>
                         </th>
                         <th class="text-center">
-                            <a href="@Url.Action("Index", new { filter.EmployeeName, filter.LeaveTypeId, filter.StartDate, filter.EndDate, filter.Status, SortBy = "Status", SortDescending = filter.SortBy == "Status" ? !filter.SortDescending : true })" class="text-dark text-decoration-none">
+                            <a href="@Url.Action("Index", new { filter.EmployeeName, filter.LeaveTypeId, filter.StartDate, filter.EndDate, filter.Status, SortBy = "Status", SortDescending = filter.SortBy == "Status" ? !filter.SortDescending : true })" class="text-decoration-none">
                                 Status
                                 @if (filter.SortBy?.ToLower() == "status")
                                 {
