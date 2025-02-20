@@ -76,10 +76,42 @@
             <table class="table table-hover align-middle mb-0">
                 <thead>
                     <tr>
-                        <th class="ps-4">Employee</th>
-                        <th>Leave Type</th>
-                        <th>Duration</th>
-                        <th class="text-center">Status</th>
+                        <th class="ps-4">
+                            <a href="@Url.Action("Index", new { filter.EmployeeName, filter.LeaveTypeId, filter.StartDate, filter.EndDate, filter.Status, SortBy = "EmployeeName", SortDescending = filter.SortBy == "EmployeeName" ? !filter.SortDescending : true })" class="text-dark text-decoration-none">
+                                Employee
+                                @if (filter.SortBy?.ToLower() == "employeename")
+                                {
+                                    <i class="bi @(filter.SortDescending ? "bi-sort-down" : "bi-sort-up")"></i>
+                                }
+                            </a>
+                        </th>
+                        <th>
+                            <a href="@Url.Action("Index", new { filter.EmployeeName, filter.LeaveTypeId, filter.StartDate, filter.EndDate, filter.Status, SortBy = "LeaveType", SortDescending = filter.SortBy == "LeaveType" ? !filter.SortDescending : true })" class="text-dark text-decoration-none">
+                                Leave Type
+                                @if (filter.SortBy?.ToLower() == "leavetype")
+                                {
+                                    <i class="bi @(filter.SortDescending ? "bi-sort-down" : "bi-sort-up")"></i>
+                                }
+                            </a>
+                        </th>
+                        <th>
+                            <a href="@Url.Action("Index", new { filter.EmployeeName, filter.LeaveTypeId, filter.StartDate, filter.EndDate, filter.Status, SortBy = "Duration", SortDescending = filter.SortBy == "Duration" ? !filter.SortDescending : true })" class="text-dark text-decoration-none">
+                                Duration
+                                @if (filter.SortBy?.ToLower() == "duration")
+                                {
+                                    <i class="bi @(filter.SortDescending ? "bi-sort-down" : "bi-sort-up")"></i>
+                                }
+                            </a>
+                        </th>
+                        <th class="text-center">
+                            <a href="@Url.Action("Index", new { filter.EmployeeName, filter.LeaveTypeId, filter.StartDate, filter.EndDate, filter.Status, SortBy = "Status", SortDescending = filter.SortBy == "Status" ? !filter.SortDescending : true })" class="text-dark text-decoration-none">
+                                Status
+                                @if (filter.SortBy?.ToLower() == "status")
+                                {
+                                    <i class="bi @(filter.SortDescending ? "bi-sort-down" : "bi-sort-up")"></i>
+                                }
+                            </a>
+                        </th>
                         <th class="text-end pe-4">Actions</th>
                     </tr>
                 </thead>

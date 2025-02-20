@@ -50,8 +50,22 @@ namespace HrPuSystem.Controllers
                     (filter.Status == "pending" && !lr.Approved));
             }
 
-            // Order by most recent first
-            query = query.OrderByDescending(lr => lr.StartDate);
+            // Apply sorting
+            query = filter.SortBy?.ToLower() switch
+            {
+                "employeename" => filter.SortDescending
+                    ? query.OrderByDescending(lr => lr.Employee.FullName)
+                    : query.OrderBy(lr => lr.Employee.FullName),
+                "leavetype" => filter.SortDescending
+                    ? query.OrderByDescending(lr => lr.LeaveType.Name)
+                    : query.OrderBy(lr => lr.LeaveType.Name),
+                "status" => filter.SortDescending
+                    ? query.OrderByDescending(lr => lr.Approved)
+                    : query.OrderBy(lr => lr.Approved),
+                _ => filter.SortDescending
+                    ? query.OrderByDescending(lr => lr.StartDate)
+                    : query.OrderBy(lr => lr.StartDate)
+            };
 
             // Setup ViewBag data for filters
             ViewBag.LeaveTypes = await _context.LeaveTypes
